@@ -1,0 +1,116 @@
+{Faltan 2 robots}
+{Consultar los procesos recorrer y sus parametros para que no se exceda del limite de la zona.}
+
+programa areasParEimpar
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso dejarFlores
+  comenzar
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso dejarPapeles
+  comenzar
+    mientras (HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  
+  proceso recorrerCalles(E cantAv: numero; E avenidaLimite: numero)
+  comenzar
+    repetir cantAv
+      juntarFlores
+      si (PosAv<avenidaLimite)
+        mover
+  fin
+  
+  proceso recorrerFlores(E cantiEsq: numero; E aveIni: numero; E calleIni: numero; E aveLim: numero)
+  comenzar
+    derecha
+    recorrerCalles(cantiEsq, aveLim)
+    Pos(aveIni, (calleIni+5))
+    recorrerCalles(cantiEsq, aveLim)
+    dejarFlores
+  fin
+
+  proceso recorrerAvenidas(E cantCa: numero; E calleLimite: numero)
+  comenzar
+    repetir cantCa
+      juntarPapeles
+      si (PosCa<calleLimite)
+        mover
+  fin
+  
+  proceso recorrerPapeles(E cantiEsq: numero; E aveIni: numero; E calleIni: numero; E calleLim: numero)
+  comenzar
+    recorrerAvenidas(cantiEsq, calleLim)
+    Pos((aveIni+5), calleIni)
+    recorrerAvenidas(cantiEsq, calleLim)
+    dejarPapeles
+  fin
+
+areas
+ {robot 1}
+  calle75: AreaP (1, 75, 15, 75) {limpia flores}
+  calle80: AreaP (1, 80, 15, 80) {limpia flores}
+  {robot 2}
+  avenida75: AreaP (75, 80, 75, 100){limpia papeles}
+  avenida80: AreaP (80, 80, 80, 100){limpia papeles}
+  {robot 3}
+  calle10: AreaP(70, 10, 100, 10)
+  calle15: AreaP(70, 15, 100, 15)
+  {robot 4}
+  avenida10: AreaP(10, 1, 10, 10)
+  avenida15: AreaP(15, 1, 15, 10) 
+robots
+  robot robot1
+  comenzar
+    recorrerFlores(15, PosAv, PosCa, 15) {cantidad de esquinas a recorrer, la posicion av inicial, pos calle inicial y limite}
+  fin
+  robot robot2
+  comenzar
+    recorrerPapeles(20, PosAv, PosCa, 100)
+  fin
+  robot robot3
+  comenzar
+    recorrerFlores(30, PosAv, PosCa, 100)
+  fin
+  robot robot4
+  comenzar
+    recorrerPapeles(10, PosAv, PosCa, 10)
+  fin
+variables
+  R_info: robot1
+  R_info2: robot2
+  R_info3: robot3
+  R_info4: robot4
+comenzar
+  {robot 1}
+  AsignarArea(R_info, calle75)
+  AsignarArea(R_info, calle80)
+  {robot 2}
+  AsignarArea(R_info2, avenida75)
+  AsignarArea(R_info2, avenida80)
+  {robot 3}
+  AsignarArea(R_info3, calle10)
+  AsignarArea(R_info3, calle15)
+  {robot 4}
+  AsignarArea(R_info4, avenida10)
+  AsignarArea(R_info4, avenida15)
+  {robot 1}
+  Iniciar(R_info, 1, 75)
+  {robot 2}
+  Iniciar(R_info2, 75, 80)
+  {robot 3}
+  Iniciar(R_info3, 70, 10)
+  {robot 4}
+  Iniciar(R_info4, 10, 1)
+fin

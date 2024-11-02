@@ -1,0 +1,61 @@
+{Realice un programa para que un robot junte todas las flores de la avenida 1 y las deposite al final}
+{de dicha avenida. Al finalizar, debe informar la cantidad de flores depositadas y la cantidad de}
+{esquinas sin flores que encontrÃƒÂ³ durante el recorrido}
+  { a) Modifique el programa anterior para que el mismo robot realice lo mismo en las avenidas 1, 3 y 5}
+  { b) Modifique el programa anterior para que el trabajo sea realizado por 3 robots: uno realiza la}
+  {avenida 1, otro realiza la avenida 3 y otro la avenida 5. Cada robot debe iniciar en las esquina}
+  {(1,1), (3,1) y (5,1) respectivamente.}
+  
+programa ejemplo
+procesos
+  proceso juntarFlor(ES flor: numero; ES sinFlor: numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      mientras (HayFlorEnLaEsquina)
+        tomarFlor
+        flor:= flor + 1
+    sino
+      sinFlor:= sinFlor + 1
+  fin
+  proceso recorrerAv (ES flores: numero; ES sinFlores: numero)
+  comenzar
+    repetir 99
+      juntarFlor(flores, sinFlores)
+      mover
+    juntarFlor(flores, sinFlores)
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+areas
+  ciudad: AreaC (1,1,100,100)
+robots
+  robot robot1
+  variables
+    f: numero
+    sf: numero
+  comenzar
+    recorrerAv(f, sf)
+    Informar(f)
+    Informar(sf)
+    {a}
+    {Pos(3, 1)}
+    {recorrerAv(f, sf)}
+    {Informar(f)}
+    {Informar(sf)}
+    {Pos(5, 1)}
+    {recorrerAv(f, sf)}
+    {Informar(f)}
+    {Informar(sf)}    
+  fin
+variables
+  R_info: robot1
+  R_info2: robot1
+  R_info3: robot1
+comenzar
+  AsignarArea(R_info, ciudad)
+  AsignarArea(R_info2, ciudad)
+  AsignarArea(R_info3, ciudad)
+  Iniciar(R_info, 1,1)
+  Iniciar(R_info2, 3,1)
+  Iniciar(R_info3, 5,1)
+fin

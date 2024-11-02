@@ -1,0 +1,132 @@
+{Realice un programa en el que dos robots se encargan de limpiar las ciudad. La ciudad se divide}
+{en 4 areas: las impares (1 y 3) deben limpiarse de flores; y las pares (2 y 4) deben limpiarse de}
+{papeles. Un robot debe encargarse de las areas impares y otro robot de las pares. Modularice el}
+{recorrido de cada area.}
+  {- Area 1: desde la avenida 1 hasta la avenida 25}
+  {- Area 2: desde la avenida 26 hasta la avenida 50}
+  {- Area 3: desde la avenida 51 hasta la avenida 75}
+  {- Area 4: desde la avenida 76 hasta la avenida 100}
+
+
+{a) Analizar (no es necesario implementar) quÃ© se deberÃ­a modificar si ahora se pide que la}
+{ciudad se divida en 20 Ã¡reas:}
+{â—� Ã�rea 1: Avenidas 1 a 5}
+{â—� Ã�rea 2: Avenidas 6 a 10}
+{Area.....}
+  {Se deberia modificar la cantidad de areas y sus dimensiones. Luego, la cantidad de AVENIDAS a recorrer en cada area, ya que la     anterior recorria 25 avenidas, en este caso recorre 5. DespÃºes la cantidad de veces que se llama al proceso de recorrer el area.}
+  
+programa areasParEimpar
+procesos
+  {PROCESOS IMPARES}
+  proceso juntarFlor
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso recorrerVerticalImpar(E ca: numero; E av: numero; E cI: numero)
+  comenzar
+    repetir av
+      repetir ca
+        juntarFlor
+        mover
+      Pos(PosAv+1, cI)
+    repetir ca
+      juntarFlor
+      mover    
+  fin  
+  proceso recorrerHorizontalImpar(E ca: numero; E av: numero; E aI: numero)
+  comenzar
+    derecha
+    repetir ca
+      repetir av
+        juntarFlor
+        mover
+      Pos(aI, PosCa+1)
+    repetir av
+      juntarFlor
+      mover      
+    repetir 3
+      derecha
+  fin  
+  proceso recorrerAreaImpar(E avIni: numero; E calleIni: numero; E calles: numero; E avenidas: numero)
+  comenzar
+    Pos(avIni, calleIni)
+    recorrerVerticalImpar(calles, avenidas, calleIni)
+    Pos(avIni, calleIni)
+    recorrerHorizontalImpar(calles, avenidas, avIni)
+  fin
+  {PROCESOS PARES}
+  proceso juntarPapel
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel   
+  fin
+  proceso recorrerVerticalPar(E ca: numero; E av: numero; E cI: numero)
+  comenzar
+    repetir av
+      repetir ca
+        juntarPapel
+        mover
+      Pos(PosAv+1, cI)
+    repetir ca
+      juntarPapel
+      mover    
+  fin  
+  proceso recorrerHorizontalPar(E ca: numero; E av: numero; E aI: numero)
+  comenzar
+    derecha
+    repetir ca
+      repetir av
+        juntarPapel
+        mover
+      Pos(aI, PosCa+1)
+    repetir av
+      juntarPapel
+      mover      
+    repetir 3
+      derecha
+  fin  
+  proceso recorrerAreaPar(E avIni: numero; E calleIni: numero; E calles: numero; E avenidas: numero)
+  comenzar
+    Pos(avIni, calleIni)
+    recorrerVerticalPar(calles, avenidas, calleIni)
+    Pos(avIni, calleIni)
+    recorrerHorizontalPar(calles, avenidas, avIni)
+  fin  
+areas
+  area1: AreaP (1, 1, 25, 100) {deben limpiarse de FLORES}
+  area2: AreaP (26, 1, 50, 100){deben limpiarse de PAPELES}
+  area3: AreaP (51, 1, 75, 100) {deben limpiarse de FLORES}
+  area4: AreaP (76, 1, 100, 100){deben limpiarse de PAPELES}
+robots
+  robot impar
+  variables
+    c: numero
+    a: numero
+  comenzar
+    c:= 99 {100 calles recorren cada uno pero la ultima no la utilizo para iterar}
+    a:= 24 {25 avenidas recorren cada uno pero la ultima no la utilizo para iterar}
+    recorrerAreaImpar(1, 1, c, a)
+    recorrerAreaImpar(51, 1, c, a)
+  fin
+  robot par
+  variables
+    c: numero
+    a: numero
+  comenzar
+    c:= 99
+    a:= 24
+    recorrerAreaPar(26, 1, c, a)
+    recorrerAreaPar(76, 1, c, a)
+  fin 
+variables
+  R_info: impar
+  R_info2: par
+comenzar
+  AsignarArea(R_info, area1)
+  AsignarArea(R_info, area3)
+  AsignarArea(R_info2, area2)
+  AsignarArea(R_info2, area4)
+  Iniciar(R_info, 1, 1)
+  Iniciar(R_info2, 26, 1)
+fin

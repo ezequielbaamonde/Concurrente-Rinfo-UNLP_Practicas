@@ -1,0 +1,76 @@
+{Modifique el ejercicio anterior, considerando que ahora habrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ un robot fiscalizador,
+que sera el responsable de informar la diferencia de flores que obtuvo el ganador con
+respecto al perdedor. El robot fiscalizador se ubica en la esquina (2,1)}
+
+programa sixrobots_c
+procesos
+  proceso juntarFlores(ES cant: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cant:= cant + 1
+  fin
+  proceso recorrerAvenida(ES flores: numero)
+  comenzar
+    repetir 9
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+  fin 
+areas
+  ciudad: AreaC (2,1, 2, 2)
+  r1: AreaP (1,1,1,10){Robot 1}
+  r2: AreaP (2,11,2,20){Robot 2}
+  r3: AreaP (3, 21, 3, 30) {Robot 3}
+  r4: AreaP (4, 31, 4, 40){Robot 4}
+  r5: AreaP (5, 41, 5, 50){Robot 5}
+  r6: AreaP (6, 51, 6, 60)
+robots
+  robot tipo1
+  variables
+    f: numero
+    resultado: numero
+  comenzar
+    f:= 0
+    recorrerAvenida(f)
+    EnviarMensaje(f, robotFisca)
+  fin
+  robot fiscalizador
+  variables
+    flores: numero
+    fmax: numero
+    florTemp: numero
+  comenzar
+    flores:= 0
+    fmax:= 0
+    florTemp:= 0
+    repetir 6
+      RecibirMensaje(flores, *)
+      si (flores > fmax)
+        fmax:= flores
+    Informar('Max cantidad de flores juntado ' , fmax)
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo1
+  robot3: tipo1
+  robot4: tipo1
+  robot5: tipo1
+  robot6: tipo1
+  robotFisca: fiscalizador
+comenzar
+  AsignarArea(robot1, r1)
+  AsignarArea(robot2, r2)
+  AsignarArea(robot3, r3)
+  AsignarArea(robot4, r4)
+  AsignarArea(robot5, r5)
+  AsignarArea(robot6, r6)
+  AsignarArea(robotFisca, ciudad)
+  Iniciar(robot1, 1, 1)
+  Iniciar(robot2, 2, 11)
+  Iniciar(robot3, 3, 21)
+  Iniciar(robot4, 4,31)
+  Iniciar(robot5, 5,41)
+  Iniciar(robot6, 6,51)
+  Iniciar(robotFisca, 2,1)
+fin

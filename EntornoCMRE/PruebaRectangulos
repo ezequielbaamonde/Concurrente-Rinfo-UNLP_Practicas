@@ -1,0 +1,39 @@
+programa Rectangulo
+procesos
+  proceso juntarFlores(ES flor: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flor:= flor + 1
+  fin
+  proceso rectangulo (E alto: numero; E ancho: numero; ES flores: numero)
+  comenzar
+    repetir 2
+      repetir alto
+        juntarFlores(flores)
+        mover
+      derecha
+      repetir ancho
+        juntarFlores(flores)
+        mover
+      derecha
+  fin
+areas
+  ciudad: AreaC (1, 1, 20, 20)
+robots
+  robot robot1
+  variables
+    f: numero
+  comenzar
+    rectangulo(5, 3, f)
+    Informar(f)
+  fin
+variables
+  R_info: robot1
+  R_info2: robot1
+comenzar
+  AsignarArea(R_info, ciudad)
+  AsignarArea(R_info2, ciudad)
+  Iniciar(R_info, 2,2)
+  Iniciar(R_info2, 6,2)
+fin

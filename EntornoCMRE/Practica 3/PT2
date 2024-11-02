@@ -1,0 +1,95 @@
+
+programa Punto2
+procesos
+  proceso juntarFlores(ES f: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      f:= f + 1
+  fin
+
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso ultimoEscalonF1(ES flores: numero)
+  comenzar
+    mover {altura}
+    juntarFlores (flores)
+    derecha {para hacer ancho}
+    BloquearEsquina(16,16) {antes de hacer el ancho bloqueo la esquina}
+    mover {ancho, me paro en la 16,16}
+    juntarFlores (flores)
+  fin
+
+  proceso escalonF1 (ES flores: numero)
+  variables
+    alt, anc: numero
+  comenzar
+    alt:= 5
+    anc:= 5
+    repetir 4
+      repetir alt {de alto}
+        mover
+      juntarFlores (flores) {flores del vertice}
+      derecha
+      repetir anc {de lado}
+        mover
+      juntarFlores (flores) {flores del vertice}
+      repetir 3 {mirando hacia norte}
+        derecha
+      alt:= alt - 1
+      anc:= anc - 1   
+    ultimoEscalonF1(flores)
+  fin
+  
+  proceso escalonF2 (ES flores: numero)
+  variables
+    alt, anc: numero
+  comenzar
+    alt:= 2 {inicial}
+    anc:= 3 {inicial}
+    repetir 3 {Pos Inicial}
+      mover
+    LiberarEsquina(16, 16)
+    derecha
+    repetir 3 {Escalones}
+      repetir alt {de alto}
+        mover
+      juntarFlores (flores) {del vertice}
+      repetir 3
+        derecha {Orientación a la izquierda}
+      repetir anc {de lado}
+        mover
+      juntarFlores(flores) {del vertice}
+      derecha {Orientación al norte}
+      alt:= alt + 1
+      anc:= anc + 1
+    repetir alt {Ultimo tramo del recorrido}
+      mover
+    juntarFlores(flores)
+    repetir 3
+      derecha {Orientación a la izq}
+  fin
+   
+areas
+  ciudad: AreaC (1, 1, 100, 100) 
+robots
+  robot robot1
+  variables
+    flores: numero
+  comenzar
+    escalonF1(flores)
+    repetir 2
+      derecha
+    escalonF2(flores)
+  fin
+variables
+  r1: robot1
+comenzar
+  AsignarArea(r1, ciudad)
+  Iniciar(r1, 1, 1)
+
+fin

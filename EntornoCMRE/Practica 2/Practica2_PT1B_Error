@@ -1,0 +1,66 @@
+{Modifique el ejercicio anterior, considerando que ahora habrÃ¡ un robot fiscalizador,
+que serÃ¡ responsable de informar la diferencia de flores que obtuvo el ganador con
+respecto al perdedor. El robot fiscalizador se ubica en la esquina (2,1)}
+
+programa tworobots_b
+procesos
+  proceso juntarFlores(ES cant: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cant:= cant + 1
+  fin
+  proceso recorrerAvenida(ES flores: numero)
+  comenzar
+    repetir 9
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+  fin
+  
+areas
+  ciudad: AreaC (2,1, 2, 2)
+  r1: AreaP (1,1,1,10){Robot 1}
+  r2: AreaP (2,11,2,20){Robot 2}
+  
+robots
+  robot tipo1
+  variables
+    f: numero
+    resultado: numero
+  comenzar
+    f:= 0
+    recorrerAvenida(f)
+    EnviarMensaje(f, robotFisca)
+  fin
+  robot fiscalizador
+  variables
+    flores: numero
+    fmax: numero
+    florTemp: numero
+  comenzar
+    flores:= 0 {recibe de los robots}
+    florTemp:= 0 {cant flores temporal, para la diferencia. Si no es el ganador}
+    fmax:=0 {cant flores del robot ganador}
+    repetir 2
+      recibirMensaje(flores, *)
+      si flores>fmax
+        fmax:= flores  
+      sino
+        florTemp:= flores
+    resultado:= fmax - florTemp {max flores de 1 robot - las flores recibidas que no son ma}
+    Informar('La diferencia de flores es ', resultado)
+  fin
+  
+variables
+  robot1: tipo1
+  robot2: tipo1
+  robotFisca: fiscalizador
+comenzar
+  AsignarArea(robot1, r1)
+  AsignarArea(robot2, r2)
+  AsignarArea(robotFisca, ciudad)
+  Iniciar(robot1, 1,1)
+  Iniciar(robot2, 2,11)
+  Iniciar(robotFisca, 2,1)
+fin

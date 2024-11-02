@@ -1,0 +1,106 @@
+
+programa Punto1
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  proceso depositarFlores
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+  fin    
+  
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso depositarPapeles
+  comenzar
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+  
+areas
+  areaDepositar: AreaC (10, 10, 10, 10)
+  florerosC: AreaC(1, 1, 5, 10)
+  papelerosC: AreaC(6, 1, 10, 9)
+  florerosI: AreaC(6, 10, 7, 10)
+  papelerosI: AreaC(8, 10, 9, 10)  
+robots
+  robot floreros
+  variables
+    avenidaAle: numero
+    calleAle: numero
+    avIni: numero
+    caIni: numero
+  comenzar
+    avIni:= PosAv {Almaceno inicio}
+    caIni:= PosCa {Almaceno inicio}
+    repetir 5
+      Random (avenidaAle, 1, 5) {Aleatorio entre avs}
+      Random (calleAle, 1, 10) {Aleatorio entre calles}
+      BloquearEsquina(avenidaAle, calleAle) {Bloqueo la esquina aleatoria}
+      Pos(avenidaAle, calleAle) {Me posiciono en ella}
+      juntarFlores {Junto todas las flores de la esquina}
+      Pos(avIni, caIni){Vuelvo a mi POS INICIAL}
+      LiberarEsquina(avenidaAle, calleAle){Libero la esquina aleatoria}
+    BloquearEsquina(10, 10){Bloqueo la esquina 10, 10}
+    Pos(10,10){Me posiciono en ella}
+    depositarFlores {Dejo todas las flores de la esquina}
+    Pos(avIni, caIni){Vuelvo a mi POS INICIAL}
+    LiberarEsquina(10, 10){Libero la esquina 10, 10} 
+  fin
+ 
+  robot papeleros
+  variables
+    avenidaAle: numero
+    calleAle: numero
+    avIni: numero
+    caIni: numero
+  comenzar
+    avIni:= PosAv {Almaceno inicio}
+    caIni:= PosCa {Almaceno inicio}
+    repetir 3
+      Random (avenidaAle, 6, 10) {Aleatorio entre avs}
+      Random (calleAle, 1, 9) {Aleatorio entre calles}
+      BloquearEsquina(avenidaAle, calleAle) {Bloqueo la esquina aleatoria}
+      Pos(avenidaAle, calleAle) {Me posiciono en ella}
+      juntarPapeles {Junto todos los papeles de la esquina}
+      Pos(avIni, caIni){Vuelvo a mi POS INICIAL}
+      LiberarEsquina(avenidaAle, calleAle){Libero la esquina aleatoria}
+    BloquearEsquina(10, 10){Bloqueo la esquina 10, 10}
+    Pos(10,10){Me posiciono en ella}
+    depositarPapeles {Dejo todos los papeles de la esquina}
+    Pos(avIni, caIni){Vuelvo a mi POS INICIAL}
+    LiberarEsquina(10, 10){Libero la esquina 10, 10} 
+  fin
+  
+variables
+  recolectorFlores1: floreros
+  recolectorFlores2: floreros
+  recolectorPapeles1: papeleros
+  recolectorPapeles2: papeleros
+comenzar
+  {floreros}
+  AsignarArea(recolectorFlores1, florerosC)
+  AsignarArea(recolectorFlores2, florerosC)
+  AsignarArea(recolectorFlores1, florerosI)
+  AsignarArea(recolectorFlores2, florerosI)
+  AsignarArea(recolectorFlores1, areaDepositar)
+  AsignarArea(recolectorFlores2, areaDepositar)  
+  {papeleros}
+  AsignarArea(recolectorPapeles1, papelerosC)
+  AsignarArea(recolectorPapeles2, papelerosC)
+  AsignarArea(recolectorPapeles1, papelerosI)
+  AsignarArea(recolectorPapeles2, papelerosI)
+  AsignarArea(recolectorPapeles1, areaDepositar) 
+  AsignarArea(recolectorPapeles2, areaDepositar)
+  Iniciar(recolectorFlores1, 6, 10)
+  Iniciar(recolectorFlores2, 7, 10)
+  Iniciar(recolectorPapeles1, 8, 10)
+  Iniciar(recolectorPapeles2, 9, 10)
+fin

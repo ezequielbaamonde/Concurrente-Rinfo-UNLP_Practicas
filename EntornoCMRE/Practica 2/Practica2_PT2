@@ -1,0 +1,86 @@
+{Consultar por quÃ© cuando aparece una flor o un papel el programa dÃ¡ error}
+
+programa threerobots
+procesos
+  proceso verFlores(ES f: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      f:= f + 1
+  fin
+  
+  proceso verPapeles(ES p: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      p:= p + 1
+  fin
+  
+  proceso evaluarMayor(E f: numero; E p: numero; ES escalones: numero)
+  comenzar
+    si (f>p)
+      escalones:= escalones + 1 
+  fin
+  
+  proceso escalon(ES cantEscalones: numero)
+  variables
+    cantF, cantP, alto: numero
+  comenzar
+    repetir 4
+      Random (alto, 1, 5) {alto entre 1 y 5}
+      cantF:= 0 {inicializo la cant flores del escalon en 0}
+      cantP:= 0 {inicializo la cant papeles del escalon en 0}
+      repetir alto
+        verFlores(cantF)
+        verPapeles(cantP)
+        mover
+      derecha {orientado al ancho del escalon}
+      verFlores(cantF)
+      verPapeles(cantP)
+      mover {1 ancho fijo}
+      verFlores(cantF)
+      verPapeles(cantP)
+      evaluarMayor (cantF, cantP, cantEscalones) {evaluo si hay mas flores que papeles en el escalon}
+      repetir 3
+        derecha
+  fin 
+  
+areas
+  ciudad: AreaC (1, 1, 100, 100)
+ 
+robots
+  robot tipo1
+  variables
+    e: numero
+  comenzar
+    e:= 0
+    escalon(e)
+    EnviarMensaje(e, robotFisca)
+  fin
+  
+  robot fiscalizador
+  variables
+    suma: numero
+    escalones: numero
+  comenzar
+    suma:= 0
+    repetir 3
+      RecibirMensaje(escalones, *)
+      suma:= suma + escalones
+    Informar('Cantidad total de escalones con mas flores que papeles ', suma)
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo1
+  robot3: tipo1
+  robotFisca: fiscalizador
+comenzar
+  AsignarArea(robot1, ciudad)
+  AsignarArea(robot2, ciudad)
+  AsignarArea(robot3, ciudad)
+  AsignarArea(robotFisca, ciudad)
+  Iniciar(robot1, 2, 1)
+  Iniciar(robot2, 7, 1)
+  Iniciar(robot3, 12, 1)
+  Iniciar(robotFisca, 1,1)
+fin

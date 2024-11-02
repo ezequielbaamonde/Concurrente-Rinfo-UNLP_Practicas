@@ -1,0 +1,58 @@
+{
+
+programa escalones
+procesos
+  proceso verFlores (E f: numero; ES e: numero)
+  comenzar
+    repetir 2
+      si (HayFlorEnLaEsquina)
+        f:= f+1
+    si (f>1)
+      e:= e+1
+  fin
+  proceso escalon(E altura: numero; E ancho: numero; ES escalones: numero)
+  variables
+    cantFlores: numero
+  comenzar
+    mientras (PosAv<100) & (PosCa < 100)
+      repetir altura
+        si (PosAv<100) & (PosCa < 100)
+          mover
+      derecha
+      repetir ancho
+        si (PosAv<100) & (PosCa < 100)
+          verFlores(cantFlores, escalones)
+          mover
+      repetir 3
+        derecha
+      altura:= altura + 1
+      ancho:= ancho + 1
+  fin
+areas
+  ciudad: AreaC (1, 1, 100, 100)
+robots
+  robot robot1
+  variables
+    x: numero
+    y: numero
+    cantEscalones: numero
+  comenzar
+    y:= 1
+    x:= 1
+    escalon(y, x, cantEscalones)
+    Informar(cantEscalones)
+  fin
+  
+variables
+  R_info: robot1
+  R_info2: robot1
+  R_info3: robot1
+
+comenzar
+  AsignarArea(R_info, ciudad)
+  AsignarArea(R_info2, ciudad)
+  AsignarArea(R_info3, ciudad)
+  Iniciar(R_info, 12,14)
+  Iniciar(R_info2, 17,10)
+  Iniciar(R_info3, 22, 6)
+fin

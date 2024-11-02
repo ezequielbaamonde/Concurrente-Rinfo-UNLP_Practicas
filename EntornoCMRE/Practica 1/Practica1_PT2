@@ -1,0 +1,73 @@
+{Realice un programa en el que 4 robots limpien de papeles el perimetro de un cuadrado de lado} 
+{20 en sentido horario, como se muestra en la figura:} 
+  {El vertice inferior izquierdo del cuadrado se ubica en la esquina (10,10).}
+  {Al finalizar, cada robot debe informar la cantidad de papeles juntados en su lado.}
+
+{Las areas deben declarase como compartidas, ya que vamos a designar todos los robots declarados y comparten esquinas}
+{Si, hay riesgo de colisión si un robot queda en su esquina inicial juntando papeles y no avanza}
+programa cuadrado
+procesos
+  proceso juntarPapel(ES papel: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papel:= papel + 1
+  fin
+  proceso recorrerAv (ES papeles: numero)
+  comenzar
+    repetir 20
+      juntarPapel(papeles)
+      mover
+  fin
+areas
+  cuadrado: AreaC (10, 10, 30, 30)
+robots
+  robot robot1
+  variables
+    p: numero
+  comenzar
+    recorrerAv(p)
+    Informar(p)
+  fin
+  robot robot2
+  variables
+    p: numero
+  comenzar
+    derecha
+    recorrerAv(p)
+    Informar(p)
+  fin
+  robot robot3
+  variables
+    p: numero
+  comenzar
+    repetir 2
+      derecha
+    recorrerAv(p)
+    Informar(p)
+  fin
+  robot robot4
+  variables
+    p: numero
+  comenzar
+    repetir 3
+      derecha
+    recorrerAv(p)
+    Informar(p)
+  fin
+  
+variables
+  R_info: robot1
+  R_info2: robot2
+  R_info3: robot3
+  R_info4: robot4
+comenzar
+  AsignarArea(R_info, cuadrado)
+  AsignarArea(R_info2, cuadrado)
+  AsignarArea(R_info3, cuadrado)
+  AsignarArea(R_info4, cuadrado)
+  Iniciar(R_info, 10,10)
+  Iniciar(R_info2, 10,30)
+  Iniciar(R_info3, 30,30)
+  Iniciar(R_info4, 30,10)
+fin

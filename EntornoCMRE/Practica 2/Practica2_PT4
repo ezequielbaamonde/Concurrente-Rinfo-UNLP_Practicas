@@ -1,0 +1,113 @@
+programa equiposB
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  
+  proceso juntarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  
+  proceso apagarRobots
+  comenzar
+    EnviarMensaje(F, r1)
+    EnviarMensaje(F, r2)
+    EnviarMensaje(F, r3)
+    EnviarMensaje(F, r4)
+  fin
+
+areas
+  cuadrante: AreaP (25, 25, 75, 75)
+  inicio: AreaC (1,1, 40, 1)
+ 
+robots
+  robot recolector
+  variables
+    permiso: boolean
+    id: numero
+    calleIni: numero
+    avenidaIni: numero
+    calleAle: numero
+    avenidaAle: numero
+    esq: boolean
+  comenzar
+    RecibirMensaje(id, fiscalizador) {Recibe su ID}
+    RecibirMensaje(permiso, fiscalizador) {Espera a recibir acceso}
+    mientras (permiso = V)
+      calleIni:= PosCa {Almaceno calle inicial para retorno}
+      avenidaIni:= PosAv {Almaceno avenida inicial para retorno}
+      Random (avenidaAle, 25, 75)
+      Random (calleAle, 25, 75)
+      si ((avenidaAle = 50) & (calleAle = 50))
+        esq:= V
+      sino
+        esq:= F
+      Pos(avenidaAle, calleAle)
+      juntarPapeles
+      juntarFlores
+      EnviarMensaje(id, fiscalizador)
+      EnviarMensaje(esq, fiscalizador)
+      Pos(avenidaIni, calleIni)
+      RecibirMensaje(permiso, fiscalizador) {Espera a recibir acceso o a que se apague el robot}
+      {evita que se finalice solo}
+  fin
+
+  robot fisca
+  variables
+    ale: numero
+    quien: numero
+    esquina: boolean
+    rGanador: numero
+   
+  comenzar 
+    {Enviar ID a robots}
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    repetir 10
+      Random (ale, 1, 4) {Robot Aleatorio}
+      si (ale=1)
+        EnviarMensaje(V, r1) {le doy acceso al area}
+      si (ale=2)
+        EnviarMensaje(V, r2) {le doy acceso al area}
+      si (ale=3)
+        EnviarMensaje(V, r3) {le doy acceso al area}
+      si (ale=4)
+        EnviarMensaje(V, r4) {le doy acceso alarea}
+      {Una vez que los robots tienen acceso al area, el fiscalizador espera ID robot y si alguno estuvo en la 50,50}
+      RecibirMensaje(quien, *) {Le notifican quien termino de juntar}
+      RecibirMensaje(esquina, *) {le avisan si la esquina donde junto era la 50,50}
+      si (esquina=V) {Habria que ver si +1 robot llega a la esquina 50,50}
+        rGanador:= quien
+    apagarRobots
+    Informar ('Ganador ', rGanador)
+  fin
+  
+variables
+  fiscalizador: fisca
+  r1: recolector
+  r2: recolector
+  r3: recolector
+  r4: recolector
+comenzar
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r2, cuadrante)
+  AsignarArea(r3, cuadrante)
+  AsignarArea(r4, cuadrante) 
+  AsignarArea(fiscalizador, inicio)
+  AsignarArea(r1, inicio)
+  AsignarArea(r2, inicio)
+  AsignarArea(r3, inicio)
+  AsignarArea(r4, inicio)
+  Iniciar(fiscalizador, 1, 1)
+  Iniciar(r1, 25, 1)
+  Iniciar(r2, 30, 1)
+  Iniciar(r3, 35, 1)
+  Iniciar(r4, 40, 1)
+
+fin
