@@ -1,0 +1,91 @@
+{Consultar cómo hacer si hay 2 robots o más con la misma cantidad de flores}
+
+programa Punto3
+procesos
+  proceso juntarFlores(ES f:numero)
+  comenzar
+    si HayFlorEnLaEsquina
+      tomarFlor
+      f:= f+1
+  fin
+  
+  proceso esquina(E ale: numero)
+  comenzar
+    EnviarMensaje(ale, r1){id}
+    EnviarMensaje(ale, r2){id}
+    EnviarMensaje(ale, r3){id}
+    EnviarMensaje(ale, r4){id}
+  fin
+  
+areas
+  cuadrante: AreaC (2, 2, 10, 10)
+  inicios: AreaC (1, 1, 5, 1)
+robots
+  robot recolectores
+  variables
+    id, flores, avIni, caIni, avRandom, caRandom: numero
+    parar: boolean
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    flores:= 0
+    parar:= F
+    RecibirMensaje(id, rjefe)
+    RecibirMensaje(avRandom, rjefe)
+    RecibirMensaje(caRandom, rjefe)
+    mientras (parar = F)
+      BloquearEsquina (avRandom, caRandom)
+      Pos (avRandom, caRandom)
+      juntarFlores(flores)
+      si ~(HayFlorEnLaEsquina)
+        parar:= V
+      Pos(avIni, caIni)
+      LiberarEsquina (avRandom, caRandom)
+    EnviarMensaje(id, rjefe)
+    EnviarMensaje(flores, rjefe)
+  fin
+  
+  robot jefe
+  variables
+    ale, quien, flores, fmax, idmax: numero
+  comenzar
+    fmax:= 0
+    flores:= 0
+    EnviarMensaje(1, r1){id}
+    EnviarMensaje(2, r2){id}
+    EnviarMensaje(3, r3){id}
+    EnviarMensaje(4, r4){id}
+    Random (ale, 2, 10) {Avenida Aleatoria}
+    esquina(ale) {envio a los robots av ale}
+    Random (ale, 2, 10) {Calle Aleatoria}
+    esquina(ale) {envio a los robots calle ale}
+    repetir 4
+      RecibirMensaje(quien, *) {Recibe ID}
+      RecibirMensaje(flores, *){Recibe flores}
+      si fmax < flores
+        fmax:= flores
+        idmax:= quien
+    Informar ('Gano el robotito ' , idmax)
+  fin
+variables
+  rjefe: jefe
+  r1: recolectores
+  r2: recolectores
+  r3: recolectores
+  r4: recolectores
+comenzar
+  AsignarArea(r1, cuadrante)
+  AsignarArea(r2, cuadrante)
+  AsignarArea(r3, cuadrante)
+  AsignarArea(r4, cuadrante)
+  AsignarArea(r1, inicios)
+  AsignarArea(r2, inicios)
+  AsignarArea(r3, inicios)
+  AsignarArea(r4, inicios)  
+  AsignarArea(rjefe, inicios)
+  Iniciar(rjefe, 1,1)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 3,1)
+  Iniciar(r3, 4,1)
+  Iniciar(r4, 5,1)
+fin
