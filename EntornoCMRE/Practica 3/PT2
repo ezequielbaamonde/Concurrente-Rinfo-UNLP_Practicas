@@ -8,23 +8,25 @@ procesos
       f:= f + 1
   fin
 
-  proceso juntarPapeles
+  proceso juntarPapeles(ES p: numero)
   comenzar
     mientras HayPapelEnLaEsquina
       tomarPapel
+      p:= p + 1
   fin
 
-  proceso ultimoEscalonF1(ES flores: numero)
+  proceso ultimoEscalonF1(ES flores: numero; E id: numero)
   comenzar
     mover {altura}
     juntarFlores (flores)
     derecha {para hacer ancho}
     BloquearEsquina(16,16) {antes de hacer el ancho bloqueo la esquina}
     mover {ancho, me paro en la 16,16}
+    EnviarMensaje(id, rj)
     juntarFlores (flores)
   fin
 
-  proceso escalonF1 (ES flores: numero)
+  proceso escalonF1 (ES flores: numero; E id: numero)
   variables
     alt, anc: numero
   comenzar
@@ -42,10 +44,10 @@ procesos
         derecha
       alt:= alt - 1
       anc:= anc - 1   
-    ultimoEscalonF1(flores)
+    ultimoEscalonF1(flores, id)
   fin
   
-  proceso escalonF2 (ES flores: numero)
+  proceso escalonF2 (ES flores: numero;)
   variables
     alt, anc: numero
   comenzar
@@ -60,36 +62,129 @@ procesos
         mover
       juntarFlores (flores) {del vertice}
       repetir 3
-        derecha {Orientación a la izquierda}
+        derecha {OrientaciÃ³n a la izquierda}
       repetir anc {de lado}
         mover
       juntarFlores(flores) {del vertice}
-      derecha {Orientación al norte}
+      derecha {OrientaciÃ³n al norte}
       alt:= alt + 1
       anc:= anc + 1
     repetir alt {Ultimo tramo del recorrido}
       mover
     juntarFlores(flores)
     repetir 3
-      derecha {Orientación a la izq}
+      derecha {OrientaciÃ³n a la izq}
   fin
    
+  proceso ultimoEscalonP1(ES papeles: numero; E id: numero)
+  comenzar
+    mover {altura}
+    juntarPapeles (papeles)
+    repetir 3
+      derecha {para hacer ancho}
+    BloquearEsquina(16,16) {antes de hacer el ancho bloqueo la esquina}
+    EnviarMensaje(id, rj)
+    mover {ancho, me paro en la 16,16}
+    juntarPapeles (papeles)
+  fin
+  
+  proceso escalonP2 (ES papeles: numero)
+  variables
+    alt, anc: numero
+  comenzar
+    alt:= 2 {inicial}
+    anc:= 3 {inicial}
+    repetir 3 {Pos Inicial}
+      mover
+    LiberarEsquina(16, 16)
+    repetir 3
+      derecha
+    repetir 3 {Escalones}
+      repetir alt {de alto}
+        mover
+      juntarPapeles (papeles) {del vertice}
+      derecha {Orientacion a la izquierda}
+      repetir anc {de lado}
+        mover
+      juntarPapeles (papeles) {del vertice}
+      repetir 3
+        derecha
+      alt:= alt + 1
+      anc:= anc + 1
+    repetir alt {Ultimo tramo del recorrido}
+      mover
+    juntarPapeles (papeles) {del vertice}
+    derecha
+  fin
+   
+  proceso escalonP1 (ES papeles: numero; E id: numero)
+  variables
+    alt, anc: numero
+  comenzar
+    alt:= 5
+    anc:= 5
+    repetir 4
+      repetir alt {de alto}
+        mover
+      juntarPapeles (papeles) {papeles del vertice}
+      repetir 3
+        derecha
+      repetir anc {de lado}
+        mover
+      juntarPapeles (papeles) {flores del vertice}
+      derecha {hacia norte}
+      alt:= alt - 1
+      anc:= anc - 1   
+    ultimoEscalonP1(papeles, id)
+  fin
+  
 areas
   ciudad: AreaC (1, 1, 100, 100) 
 robots
   robot robot1
   variables
-    flores: numero
+    flores, id: numero
   comenzar
-    escalonF1(flores)
+    RecibirMensaje(id, rj)
+    escalonF1(flores, id)
     repetir 2
       derecha
     escalonF2(flores)
+    Informar('Cantidad de flores ', flores)
   fin
+  
+  robot robot2
+  variables
+    papeles, id: numero
+  comenzar
+    RecibirMensaje(id, rj)
+    escalonP1(papeles, id)
+    repetir 2
+      derecha
+    escalonP2(papeles)
+    Informar('Cantidad de papeles ', papeles)
+  fin
+  
+  robot rjefe
+  variables
+    quien: numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    RecibirMensaje(quien, *)
+    Informar('Robot ganador ', quien)
+  fin
+  
 variables
   r1: robot1
+  r2: robot2
+  rj: rjefe
 comenzar
   AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(rj, ciudad)
   Iniciar(r1, 1, 1)
+  Iniciar(r2, 31, 1)
+  Iniciar(rj, 15, 1)
 
 fin
