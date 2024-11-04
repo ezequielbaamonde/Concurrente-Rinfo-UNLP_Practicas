@@ -1,0 +1,114 @@
+{Problema al tener flores}
+
+programa Punto4
+procesos
+  proceso juntarFlores (ES estado: boolean)
+  comenzar
+    si HayFlorEnLaEsquina
+      tomarFlor
+    sino
+      estado:= V
+  fin
+
+  proceso dejarFlores
+  comenzar
+    si HayFlorEnLaBolsa
+      depositarFlor
+  fin
+
+  proceso enviarEstado (E est: boolean)
+  comenzar
+    EnviarMensaje(est, r1)
+    EnviarMensaje(est, r2) 
+    EnviarMensaje(est, r3) 
+    EnviarMensaje(est, r4) 
+  fin
+  proceso enviarId
+  comenzar
+    EnviarMensaje(1, r1) {id}
+    EnviarMensaje(2, r2) {id}
+    EnviarMensaje(3, r3) {id}
+    EnviarMensaje(4, r4) {id}
+  fin
+areas
+  esquinas: AreaC (10, 10, 11, 11)
+  inicios: AreaC (9, 9, 9, 12)
+  inicioJefe: AreaC (1,1,1,1)
+robots
+  robot recolectores
+  variables
+    id, avIni, caIni: numero
+    estado: boolean
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    RecibirMensaje(id, coordi)
+    RecibirMensaje(estado, coordi) {En principio el estado es falso}
+    mientras (estado = F)
+      BloquearEsquina(10,10) {bloqueo esquina donde junto flor}
+      Pos(10,10) {voy para juntar flores}
+      juntarFlores(estado) {junto o verifico si no hay fores en 10,10}
+      BloquearEsquina(11,11) {esquina de deposito}
+      Pos(11,11) {voy}
+      LiberarEsquina(10,10) {libero anterior esquina}
+      dejarFlores
+      Pos(avIni, caIni) {vuelvo a esquina inicial}
+      LiberarEsquina(11,11) {libero esquina de deposito}
+      EnviarMensaje(estado, coordi) {le envio al coordinador el estado 10,10}
+      si (estado = V)
+        EnviarMensaje(id, coordi){Le aviso al robot que termine}
+      RecibirMensaje(estado, coordi){recibe en el estado si OK es FALSO o TRUE PARA TERMINAR BUCLE}
+    {Si salgo del mientras, es porque finalice}
+  fin
+  
+  robot coordinador
+  variables
+    id, ultId: numero
+    estado, ok: boolean
+  comenzar
+    ultId:= 0
+    ok:= F
+    enviarId {mensajes de id a cada robot}
+    enviarEstado(ok) {falso}
+    mientras (ok = F)
+      repetir 4 {recibe mensajes de los 4 robotos mientras sea falso}
+        RecibirMensaje(estado, *)
+        si (estado = V)
+          ok:= V {quiere decir que ya puedo dejar de recibir mensajes estado}
+          RecibirMensaje(id, *)
+          ultId:= id {id del que paso true y fue el ultimo}
+          enviarEstado(ok){envio que ya no hay flores en la esquina para finalizar ejecución robots}
+        sino
+          enviarEstado(ok){envio que ok sigue siendo falso}
+    {Si salgo del bucle es porque ya ok es true}
+    Informar('El ultimo robotito en finalizar fue el ', ultId)
+    BloquearEsquina(11,11)    
+    Pos(11,11)
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+    Pos (1,1)
+    LiberarEsquina (11,11)
+  fin
+variables
+  coordi: coordinador
+  r1: recolectores
+  r2: recolectores
+  r3: recolectores
+  r4: recolectores
+comenzar
+  AsignarArea(r1, esquinas)
+  AsignarArea(r2, esquinas)
+  AsignarArea(r3, esquinas)
+  AsignarArea(r4, esquinas)
+  AsignarArea(coordi, esquinas)
+  AsignarArea(r1, inicios)
+  AsignarArea(r2, inicios)
+  AsignarArea(r3, inicios)
+  AsignarArea(r4, inicios)  
+  AsignarArea(coordi, inicioJefe)
+  Iniciar(coordi, 1,1)
+  Iniciar(r1, 9,9)
+  Iniciar(r2, 9,10)
+  Iniciar(r3, 9,11)
+  Iniciar(r4, 9,12)
+fin

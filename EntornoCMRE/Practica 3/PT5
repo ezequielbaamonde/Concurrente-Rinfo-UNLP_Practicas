@@ -1,0 +1,97 @@
+programa Punto5
+procesos
+  proceso juntarPapeles(ES hay: boolean)
+  comenzar
+    si HayPapelEnLaEsquina
+      tomarPapel
+      hay:= V
+    sino
+      hay:= F
+  fin
+  
+  proceso fuente(E av: numero; E ca: numero; ES hay: boolean)
+  comenzar
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    juntarPapeles(hay)
+    Pos(av, ca) {vuelvo donde estaba parado}
+    LiberarEsquina(11,11)
+  fin
+  proceso recorrerAv
+  variables
+    hay, terminar: boolean
+    a, c: numero
+  comenzar
+    hay:= V {asumo que hay papeles en principio ya que es una fuente de papeles}
+    mientras (hay) & ~(PosCa=100)
+      a:= PosAv
+      c:= PosCa
+      fuente (a, c, hay) {se mueve a la fuente, junta papel y comprueba si sigue habiendo}
+      mover
+  fin
+
+  proceso enviarId
+  comenzar
+    EnviarMensaje(1, r1) {id}
+    EnviarMensaje(2, r2) {id}
+    EnviarMensaje(3, r3) {id}
+    EnviarMensaje(4, r4) {id}
+  fin
+  
+areas
+  inicio: AreaP (1, 1, 1, 1)
+  fuente: AreaC (11, 11, 11, 11)
+  uno: AreaP (4, 1, 4, 100)
+  dos: AreaP (6, 1, 6, 100)
+  tres: AreaP (8, 1, 8, 100)
+  cuatro: AreaP (10, 1, 10, 100)
+  
+robots
+  robot corredor
+  variables
+    cMax, id: numero
+  comenzar
+    RecibirMensaje(id, coordi)
+    recorrerAv
+    cMax:= PosCa
+    EnviarMensaje(id, coordi)
+    EnviarMensaje(cMax, coordi)
+  fin
+  
+  robot coordinador
+  variables
+    id, idMax, idAnt, calle, calleMax, ant: numero
+  comenzar
+    idMax:= 0
+    calleMax:= 0
+    enviarId
+    repetir 4
+      RecibirMensaje(id, *)
+      RecibirMensaje(calle,*)      
+      si (calle>calleMax)
+        idMax:= id
+    Informar('El rbot que llego mas lejos fue el ', idMax)
+  fin
+variables
+  coordi: coordinador
+  r1: corredor
+  r2: corredor
+  r3: corredor
+  r4: corredor
+comenzar
+  AsignarArea(r1, uno)
+  AsignarArea(r2, dos)
+  AsignarArea(r3, tres)
+  AsignarArea(r4, cuatro)
+  AsignarArea(r1, fuente)
+  AsignarArea(r2, fuente)
+  AsignarArea(r3, fuente)
+  AsignarArea(r4, fuente)
+  AsignarArea(coordi, inicio)
+  Iniciar(coordi, 1,1)
+  Iniciar(r1, 4,1)
+  Iniciar(r2, 6,1)
+  Iniciar(r3, 8,1)
+  Iniciar(r4, 10,1)
+
+fin
