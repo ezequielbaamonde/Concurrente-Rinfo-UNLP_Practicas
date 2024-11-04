@@ -18,20 +18,21 @@ procesos
   
   proceso ir
   comenzar
-    pos(11,11)
+    BloquearEsquina(11,11)
+    Pos(11,11)
     LiberarEsquina(10, 10)
     dejarFlores   
   fin
-  
-  fin
+
 areas
   esquinas: AreaC (10, 10, 11, 11)
-  inicios: AreaC (1, 1, 9, 12)
+  inicios: AreaC (9, 9, 9, 12)
+  inicioJefe: AreaC (1,1,1,1)
 robots
   robot recolectores
   variables
     id, avIni, caIni: numero
-    estado, finalice: boolean
+    estado: boolean
   comenzar
     avIni:= PosAv
     caIni:= PosCa
@@ -41,18 +42,41 @@ robots
       BloquearEsquina(10,10)
       Pos(10,10) {voy para juntar flores}
       juntarFlores(estado) {junto o verifico si no hay fores en 10,10}
-      ir {VOY A 11,11}
+      ir {VOY A 11,11 y libero esquina 10,10}
       Pos(avIni, caIni) {vuelvo a inicial}
+      LiberarEsquina(11,11)
       EnviarMensaje(estado, coordi)
       RecibirMensaje(estado, coordi)
-    finalice:= V {Si salgo del mientras, es porque finalice}
-    EnviarMensaje(finalice, coordi){Le aviso al robot que termine}
+    {Si salgo del mientras, es porque finalice}
+    EnviarMensaje(id, coordi){Le aviso al robot que termine}
   fin
   
   robot coordinador
   variables
-    id: numero
+    ultId: numero
+    estado: boolean
   comenzar
+    estado:= F
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    EnviarMensaje(F, r1)
+    EnviarMensaje(F, r2)
+    EnviarMensaje(F, r3)
+    EnviarMensaje(F, r4)
+    mientras (estado = F) {recibo mensajes hasta que el estado sea verdadero}
+      RecibirMensaje(estado, *)
+    EnviarMensaje(estado, r1)
+    EnviarMensaje(estado, r2)
+    EnviarMensaje(estado, r3)
+    EnviarMensaje(estado, r4)
+    repetir 4
+      RecibirMensaje(ultId, *)
+    Informar('El ultimo robotito en finalizar fue el ', ultId)    
+    Pos(11,11)
+    mientras HayFlorEnLaEsquina
+      tomarFlor
   fin
 variables
   coordi: coordinador
@@ -65,11 +89,12 @@ comenzar
   AsignarArea(r2, esquinas)
   AsignarArea(r3, esquinas)
   AsignarArea(r4, esquinas)
+  AsignarArea(coordi, esquinas)
   AsignarArea(r1, inicios)
   AsignarArea(r2, inicios)
   AsignarArea(r3, inicios)
   AsignarArea(r4, inicios)  
-  AsignarArea(coordi, inicios)
+  AsignarArea(coordi, inicioJefe)
   Iniciar(coordi, 1,1)
   Iniciar(r1, 9,9)
   Iniciar(r2, 9,10)
