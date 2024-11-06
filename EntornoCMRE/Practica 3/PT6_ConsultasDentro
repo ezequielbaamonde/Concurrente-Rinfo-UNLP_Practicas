@@ -1,0 +1,86 @@
+{Consultar posibles colisiones, como bloquear esquina siguiente a la actual y luego liberarla}
+{Consultar si va todo en 1 mismo cuadrante ya que se cruzan}
+
+programa cuadrantes
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+  proceso cuadranteF(E pasos: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        juntarFlores
+        mover
+      derecha
+      repetir pasos
+        juntarFlores
+        mover
+      derecha
+  fin
+  
+  proceso cuadranteP(E pasos: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        juntarPapeles
+        mover
+      derecha
+      repetir pasos
+        juntarPapeles
+        mover
+      derecha
+  fin  
+  
+  proceso cuadranteFP(E pasos: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        juntarFlores
+        juntarPapeles
+        mover
+      derecha
+      repetir pasos
+        juntarFlores
+        juntarPapeles
+        mover
+      derecha
+  fin  
+    
+areas
+  cuadrantes: AreaC (2,2,15,15)
+
+robots
+  robot tipo1
+  comenzar
+    cuadranteF(5)
+  fin
+  robot tipo2
+  comenzar
+    cuadranteFP(9)
+  fin
+  robot tipo3
+  comenzar
+    cuadranteP(6)
+  fin
+variables
+  r1: tipo1
+  r2: tipo2
+  r3: tipo3
+comenzar
+  AsignarArea(r1, cuadrantes)
+  AsignarArea(r2, cuadrantes)
+  AsignarArea(r3, cuadrantes)
+  Iniciar(r1, 2,2)
+  Iniciar(r2, 5,5)
+  Iniciar(r3, 9,9)
+fin
