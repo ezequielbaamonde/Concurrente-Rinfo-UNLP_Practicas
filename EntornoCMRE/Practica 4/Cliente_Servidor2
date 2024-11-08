@@ -1,0 +1,140 @@
+{Consultar si está bien modularizado con respecto al punto original}
+
+programa ClienteServidor
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  proceso dejarFlor
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+      si (PosCa<100) {mientrasno se salga del limite, mueve}
+        mover
+  fin
+  
+  proceso enviarId
+  comenzar
+    EnviarMensaje(1, cli1)
+    EnviarMensaje(2, cli2)
+    EnviarMensaje(3, cli3)
+  fin
+  
+  proceso procesarDatos1(E flores: numero)
+  variables
+    avIr, caIr: numero
+  comenzar
+    RecibirMensaje(avIr, cli1)
+    RecibirMensaje(caIr, cli1)
+    Pos(avIr, caIr)
+    repetir flores
+      depositarFlor
+    Pos(100,100) {vuelvoa  esquina}
+    EnviarMensaje(V, cli1) {termine de depositar flores y le aviso al cliente "1"} 
+  fin
+  
+  proceso procesarDatos2(E flores: numero)
+  variables
+    avIr, caIr: numero
+  comenzar
+    RecibirMensaje(avIr, cli2) {recibo del cliente "2"}  
+    RecibirMensaje(caIr, cli2) {recibo del cliente "2"}
+    Pos(avIr, caIr)
+    repetir flores
+      depositarFlor
+    Pos(100,100) {vuelvoa  esquina}
+    EnviarMensaje(V, cli2) {termine de depositar flores y le aviso al cliente "2"} 
+  fin
+
+  proceso procesarDatos3(E flores: numero)
+  variables
+    avIr, caIr: numero
+  comenzar
+    RecibirMensaje(avIr, cli3) {recibo del cliente "3"}  
+    RecibirMensaje(caIr, cli3) {recibo del cliente "3"}
+    Pos(avIr, caIr)
+    repetir flores
+      depositarFlor
+    Pos(100,100) {vuelvoa  esquina}
+    EnviarMensaje(V, cli3) {termine de depositar flores y le aviso al cliente "3"} 
+  fin
+  
+areas
+  server: AreaP (100,100,100,100)
+  cliente1: AreaP (1,1,1,1)
+  cliente2: AreaP (2,1,2,1)
+  cliente3: AreaP (3,1,3,1)
+robots
+  robot servidor
+  variables
+    id, flores, inicio, finalizados: numero
+  comenzar
+    finalizados:= 0
+    enviarId
+    mientras (finalizados<>3)
+      repetir 3
+        RecibirMensaje(id, *)
+        si (id=1)
+          RecibirMensaje(flores, cli1)
+          si (flores<>0)
+            procesarDatos1(flores)
+          sino
+            finalizados:= finalizados + 1
+        sino
+          si (id=2)
+            RecibirMensaje(flores, cli2)
+            si (flores<>0)
+              procesarDatos2(flores)   
+            sino
+              finalizados:= finalizados + 1       
+          sino
+            si (id=3)
+              RecibirMensaje(flores, cli3)
+              si (flores<>0)
+                procesarDatos3(flores)  
+              sino
+                finalizados:= finalizados + 1    
+  fin 
+  robot cliente
+  variables
+    id, flores, serv: numero
+    ack: boolean
+  comenzar
+    serv:= 1
+    RecibirMensaje(id, sv)
+    mientras (serv = 1)
+      Random (flores, 1, 4)
+      EnviarMensaje(flores, sv) {solicito papeles}
+      EnviarMensaje(PosAv, sv){envÃƒÂ­o mi avenida actual}
+      EnviarMensaje(PosCa+1, sv) {envÃƒÂ­o mi sig calle}
+      RecibirMensaje(ack, sv) {espero confirmaciÃƒÂ³n de que dejo los papeles solicitados}
+      {si (ack = V)}
+      mover {avanzo a la sig calle}
+      juntarFlores {junto papeles}
+      dejarFlor {voy dejando 1 flor por cada calle hasta que seme agoten}
+      si (PosCa=100) {si se completa avenida}
+        serv:= 0 {con esto cierro el programa}
+        EnviarMensaje(serv, sv){le envÃƒÂ­a confirmaciÃƒÂ³n al servidor de que finalizo el robot}
+      {si no es igual, sigue en bucle}
+  fin
+variables
+  sv: servidor
+  cli1, cli2, cli3: cliente
+comenzar
+  AsignarArea(sv, server)
+  AsignarArea(sv, cliente1)
+  AsignarArea(sv, cliente2)
+  AsignarArea(sv, cliente3)
+  
+  AsignarArea(cli1, cliente1)
+  AsignarArea(cli2, cliente2)
+  AsignarArea(cli3, cliente3)  
+  
+  Iniciar(sv, 100,100)
+  Iniciar(cli1, 1,1) 
+  Iniciar(cli2, 2,1)
+  Iniciar(cli3, 3,1)
+fin

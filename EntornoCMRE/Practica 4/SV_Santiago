@@ -76,6 +76,20 @@ robots
         Pos(100,100)
         ack(id) {envio confirmacion de ack}
         {recibo confirmacion del robot}
+        si (id = 1)
+          RecibirMensaje(confirm, cli1)
+          si (confirm = 0)
+            finalizados:= finalizados + 1
+        sino
+          si (id = 2)
+            RecibirMensaje(confirm, cli1)
+            si (confirm = 0)
+              finalizados:= finalizados + 1  
+          sino
+            si (id = 3)
+              RecibirMensaje(confirm, cli1)
+              si (confirm = 0)
+                finalizados:= finalizados + 1  
       sino
         finalizados:= finalizados + 1
   fin 
@@ -98,8 +112,10 @@ robots
       dejarFlor {voy dejando 1 flor por cada calle hasta que seme agoten}  
       si (PosCa=100) {si se completa avenida}
         serv:= 0 {con esto cierro el programa}
-        EnviarMensaje(id, sv) {envio quien soy}
-        EnviarMensaje(serv, sv){le envio confirmacion al servidor de que finalizo el robot como si fuera una flor=0}
+        EnviarMensaje(serv, sv){le envio confirmacion al servidor de que finalizo el robot}
+      sino
+        EnviarMensaje(serv, sv){le envio 1 al servidor de que sigo en ejecuciÃ³n}
+      {si no es igual, sigue en bucle}
   fin
 variables
   sv: servidor
