@@ -1,0 +1,184 @@
+{Este punto no lo voy a hacer, es muy específico. Lo vi con el ayudante}
+{básicamente para que no COLISIONEN cada recorrido del cuadrante debe tener un repetir con la cantidad de pasos que da por lado}
+{antes de una posible colisión, el robot debe dejar de "repetir" su mover, bloquear la esquina, avanzar, juntar, avanzar, liberar}
+{Entonces, en un lado que quizás es de 5 debemos dividir sus movimientos en 3 partes. La primera parte, la del  medio y el final}
+
+programa cuadrantes
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+  proceso dejarTodo
+  comenzar
+    si (HayFlorEnLaBolsa)
+      depositarFLor
+    si (HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  
+  proceso cuadranteF(E pasos: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        juntarFlores
+        BloquearEsquina(PosAv, PosCa + 1)
+        mover
+      derecha
+      repetir pasos
+        juntarFlores
+        mover
+      derecha
+  fin
+  
+  proceso cuadranteP(E pasos: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        juntarPapeles
+        mover
+      derecha
+      repetir pasos
+        juntarPapeles
+        mover
+      derecha
+  fin  
+  
+  proceso cuadranteFP(E pasos: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        juntarFlores
+        juntarPapeles
+        mover
+      derecha
+      repetir pasos
+        juntarFlores
+        juntarPapeles
+        mover
+      derecha
+  fin  
+  
+  proceso evaluarR1(E r: numero) {calle 20}
+  comenzar
+    si (r = 1)
+      EnviarMensaje(20, r1)
+    si (r = 2)
+      EnviarMensaje(20, r2)
+    si (r = 3)
+      EnviarMensaje(20, r3)
+  fin
+  
+  proceso evaluarR2(E r: numero) {calle 21}
+  comenzar
+    si (r = 1)
+      EnviarMensaje(21, r1)
+    si (r = 2)
+      EnviarMensaje(21, r2)
+    si (r = 3)
+      EnviarMensaje(21, r3)
+  fin
+  
+  proceso evaluarR3(E r: numero) {calle 22}
+  comenzar
+    si (r = 1)
+      EnviarMensaje(22, r1)
+    si (r = 2)
+      EnviarMensaje(22, r2)
+    si (r = 3)
+      EnviarMensaje(22, r3)
+  fin
+  
+  proceso evaluarCalle(E posicion: numero; E r: numero)
+  comenzar
+    si (posicion = 1)
+      evaluarR1(r)
+    si (posicion = 2)
+      evaluarR2(r)
+    si (posicion = 3)
+      evaluarR3(r)
+  fin
+    
+    
+  proceso irDejando(E numCa: numero)
+  comenzar
+    Pos(1, numCA)
+    mientras (PosCa < 100) & ((HayFlorEnLaBolsa) | (HayPapelEnLaBolsa))
+      dejarTodo
+      mover
+  fin
+areas
+  cuadrantes: AreaC (2,2,15,15)
+
+robots
+  robot tipo1
+  variables
+    id, calle: numero
+  comenzar
+    RecibirMensaje(id, fisca)
+    cuadranteF(5)
+    EnviarMensaje(V, fisca) {envio que termine cuadrante}
+    EnviarMensaje(id, fisca)
+    RecibirMensaje(calle, fisca) {recibe la calle en la que empezaria a depositar}
+    irDejando(calle)
+  fin
+  robot tipo2
+  variables
+    id, calle: numero  
+  comenzar
+    RecibirMensaje(id, fisca)
+    cuadranteFP(9)
+    EnviarMensaje(V, fisca) {envio que termine cuadrante}
+    EnviarMensaje(id, fisca)
+    RecibirMensaje(calle, fisca) {recibe la calle en la que empezaria a depositar}
+    irDejando(calle)
+  fin
+  robot tipo3
+  variables
+    id, calle: numero 
+  comenzar
+    RecibirMensaje(id, fisca)
+    cuadranteP(6)
+    EnviarMensaje(V, fisca) {envio que termine cuadrante}
+    EnviarMensaje(id, fisca)
+    RecibirMensaje(calle, fisca) {recibe la calle en la que empezaria a depositar}
+    irDejando(calle)
+  fin
+  
+  robot fiscalizador
+  variables
+    estado: boolean
+    i: numero
+  comenzar
+    i:= 1 {primer puesto inicial}
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    repetir 3
+      RecibirMensaje(estado,*) {recibo que el robot finalizo el cuadrante}
+      RecibirMensaje(id, *) {recibo quiÃ©n fue el que finalizo}
+      si (estado = V)
+        evaluarPosicion(i, id) {llamo a proceso que determina en que posicion termino; Primero, segundo, tercero...}
+        i:= i + 1
+  fin
+variables
+  r1: tipo1
+  r2: tipo2
+  r3: tipo3
+  fisca: fiscalizador
+comenzar
+  AsignarArea(r1, cuadrantes)
+  AsignarArea(r2, cuadrantes)
+  AsignarArea(r3, cuadrantes)
+  Iniciar(r1, 2,2)
+  Iniciar(r2, 5,5)
+  Iniciar(r3, 9,9)
+fin
