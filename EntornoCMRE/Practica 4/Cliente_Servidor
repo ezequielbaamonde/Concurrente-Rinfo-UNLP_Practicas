@@ -1,5 +1,5 @@
-{Estimo que está bien pero no logro hacerlo funcional debido a qué el SV no tiene flores desde el inicio}
-{lo que demorá el envío del ack}
+{Estimo que esta bien pero no logro hacerlo funcional debido a que el SV no tiene flores desde el inicio}
+{lo que demora el envio del ack}
 
 programa ClienteServidor
 procesos
@@ -112,16 +112,16 @@ robots
     mientras (serv = 1)
       Random (flores, 1, 4)
       EnviarMensaje(flores, sv) {solicito papeles}
-      EnviarMensaje(PosAv, sv){envío mi avenida actual}
-      EnviarMensaje(PosCa+1, sv) {envío mi sig calle}
-      RecibirMensaje(ack, sv) {espero confirmación de que dejo los papeles solicitados}
+      EnviarMensaje(PosAv, sv){envÃ­o mi avenida actual}
+      EnviarMensaje(PosCa+1, sv) {envÃ­o mi sig calle}
+      RecibirMensaje(ack, sv) {espero confirmaciÃ³n de que dejo los papeles solicitados}
       {si (ack = V)}
       mover {avanzo a la sig calle}
       juntarFlores {junto papeles}
       dejarFlor {voy dejando 1 flor por cada calle hasta que seme agoten}
       si (PosCa=100) {si se completa avenida}
         serv:= 0 {con esto cierro el programa}
-        EnviarMensaje(serv, sv){le envía confirmación al servidor de que finalizo el robot}
+        EnviarMensaje(serv, sv){le envÃ­a confirmaciÃ³n al servidor de que finalizo el robot}
       {si no es igual, sigue en bucle}
   fin
 variables
