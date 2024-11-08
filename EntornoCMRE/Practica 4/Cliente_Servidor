@@ -27,7 +27,6 @@ procesos
   proceso procesarDatos1(E flores: numero)
   variables
     avIr, caIr: numero
-    avAc, caAc: numero
   comenzar
     RecibirMensaje(avIr, cli1)
     RecibirMensaje(caIr, cli1)
@@ -41,7 +40,6 @@ procesos
   proceso procesarDatos2(E flores: numero)
   variables
     avIr, caIr: numero
-    avAc, caAc: numero
   comenzar
     RecibirMensaje(avIr, cli2) {recibo del cliente "2"}  
     RecibirMensaje(caIr, cli2) {recibo del cliente "2"}
@@ -55,7 +53,6 @@ procesos
   proceso procesarDatos3(E flores: numero)
   variables
     avIr, caIr: numero
-    avAc, caAc: numero
   comenzar
     RecibirMensaje(avIr, cli3) {recibo del cliente "3"}  
     RecibirMensaje(caIr, cli3) {recibo del cliente "3"}
@@ -112,16 +109,16 @@ robots
     mientras (serv = 1)
       Random (flores, 1, 4)
       EnviarMensaje(flores, sv) {solicito papeles}
-      EnviarMensaje(PosAv, sv){envÃ­o mi avenida actual}
-      EnviarMensaje(PosCa+1, sv) {envÃ­o mi sig calle}
-      RecibirMensaje(ack, sv) {espero confirmaciÃ³n de que dejo los papeles solicitados}
+      EnviarMensaje(PosAv, sv){envÃƒÂ­o mi avenida actual}
+      EnviarMensaje(PosCa+1, sv) {envÃƒÂ­o mi sig calle}
+      RecibirMensaje(ack, sv) {espero confirmaciÃƒÂ³n de que dejo los papeles solicitados}
       {si (ack = V)}
       mover {avanzo a la sig calle}
       juntarFlores {junto papeles}
       dejarFlor {voy dejando 1 flor por cada calle hasta que seme agoten}
       si (PosCa=100) {si se completa avenida}
         serv:= 0 {con esto cierro el programa}
-        EnviarMensaje(serv, sv){le envÃ­a confirmaciÃ³n al servidor de que finalizo el robot}
+        EnviarMensaje(serv, sv){le envÃƒÂ­a confirmaciÃƒÂ³n al servidor de que finalizo el robot}
       {si no es igual, sigue en bucle}
   fin
 variables
