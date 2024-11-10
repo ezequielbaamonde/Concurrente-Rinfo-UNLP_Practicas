@@ -1,0 +1,95 @@
+{Consultar si ese random va dentro o fuera del while}
+
+programa Productores_Consumidores
+procesos
+  proceso dejarPapeles
+  comenzar
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+
+  proceso juntarPapeles(ES p: numero)
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    mientras HayPapelEnLaEsquina
+      si (p<5)
+        tomarPapel  
+        p:= p+1
+      sino
+        BloquearEsquina(50,50)
+        Pos(50,50)
+        dejarPapeles
+        Pos(av, ca)
+        LiberarEsquina(50,50)
+        p:= 0
+  fin
+  
+  proceso recorrerAvenida
+  variables
+    papeles: numero
+  comenzar
+    papeles:= 0
+    repetir 99
+      juntarPapeles(papeles)
+      mover
+    juntarPapeles(papeles) {Ultima calle}
+  fin    
+areas
+  av5: AreaP(5, 1, 5, 100)
+  av10: AreaP(10, 1, 10, 100)
+  esq50: AreaC (50, 50, 50, 50) {Depositan papeles}
+  consu1: AreaP (11,1,11,1)
+  consu2: AreaP(12,1,12,1)
+robots
+  robot productores
+  comenzar
+    recorrerAvenida
+  fin
+  robot consumidores
+  variables
+    ale, intentos, origenAv, origenCa, contarPapeles: numero
+  comenzar
+    origenAv:= PosAv
+    origenCa:= PosCa
+    intentos:= 1 {valor inicial}
+    Random(ale, 2, 5)
+    mientras (intentos<>8)
+      contarPapeles:=0
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      mientras(HayPapelEnLaEsquina) & (contarPapeles<ale)
+        contarPapeles:= contarPapeles + 1
+        tomarPapel
+      si (contarPapeles<ale)
+        repetir contarPapeles
+          depositarPapel {dejo 1x1}
+      Pos(origenAv, origenCa)
+      LiberarEsquina(50,50)
+      si (contarPapeles=ale)
+        intentos:= 0
+        dejarPapeles {dejo todos los de la bolsa}
+      sino
+        intentos:= intentos + 1 {esquina sin papeles}
+  fin
+variables
+  productor1: productores
+  productor2: productores
+  consumidor1: consumidores
+  consumidor2: consumidores
+comenzar
+  AsignarArea(productor1, av5)
+  AsignarArea(productor1, esq50)
+  AsignarArea(productor2, av10)
+  AsignarArea(productor2, esq50)
+  AsignarArea(consumidor1, consu1)
+  AsignarArea(consumidor1, esq50) 
+  AsignarArea(consumidor2, consu2) 
+  AsignarArea(consumidor2, esq50) 
+  Iniciar(productor1, 5,1)
+  Iniciar(productor2, 10,1)
+  Iniciar(consumidor1, 11,1)
+  Iniciar(consumidor2, 12,1)  
+fin
