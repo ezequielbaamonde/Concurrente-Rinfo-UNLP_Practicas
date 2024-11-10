@@ -1,0 +1,80 @@
+{Consultar pasaje de mensajes}
+programa Barrera_A
+procesos
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapeles
+  fin
+  proceso avisar(E id: numero)
+  comenzar
+    si id=1
+      EnviarMensaje(id, r2)
+      EnviarMensaje(V, r2)
+      EnviarMensaje(id, r3)
+      EnviarMensaje(V, r3)
+    sino
+      si id=2
+        EnviarMensaje(id, r1)
+        EnviarMensaje(V, r1)
+        EnviarMensaje(id, r3)
+        EnviarMensaje(V, r3)
+      sino
+        si id=3
+          EnviarMensaje(id, r1)
+          EnviarMensaje(V, r1)
+          EnviarMensaje(id, r2)
+          EnviarMensaje(V, r2)
+  fin
+areas
+  av1: AreaP(1,1,1,100)
+  av2: AreaP(2,1,2,100)
+  av3: AreaP(3,1,3,100)
+  av5: AreaP(5,1,5,1)
+  
+robots
+  robot recolectores
+  variables
+    id, idRb: numero
+    seguir: boolean
+  comenzar
+    seguir:= V
+    RecibirMensaje(id, fisca)
+    mientras (PosCa<100) {mientras no se termine la av}
+      repetir 5
+        juntarPapeles
+        mover
+      avisar(id) {aviso que termine}
+      repetir 2 {espero confirmaciÃ³n retorno de los otros 2 robots}
+        RecibirMensaje(idRb, *)
+        si id=1
+          RecibirMensaje(seguir, r1)
+        sino
+          si id=2
+            RecibirMensaje(seguir, r2)
+          sino
+            si id=3
+              RecibirMensaje(seguir, r3)     
+  fin
+  robot fiscalizador
+  comenzar
+    {envios de id}
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+  fin
+variables
+  r1: recolectores
+  r2: recolectores
+  r3: recolectores
+  fisca: fiscalizador
+comenzar
+  AsignarArea(r1, av1)
+  AsignarArea(r2, av2)
+  AsignarArea(r3, av3)
+  AsignarArea(fisca, av5)
+  Iniciar(fisca, 5,1)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 2,1)
+  Iniciar(r3, 3,1)
+fin
