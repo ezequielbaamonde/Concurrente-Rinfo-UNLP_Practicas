@@ -29,30 +29,36 @@ procesos
     seguir:= F {cambio valor del while para que salga del bucle y finalice el programa cada robot}
   fin
   {proceso mensajes}
-  proceso enviarTareas(E tarea: numero; E av: numero; E ca: numero)
+  proceso enviarTareas(E tarea: numero; E av: numero; E ca: numero; E id: numero)
   comenzar
     si tarea=1
-      EnviarMensaje(1, laburante) {indico numero de tarea}
-      EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
-      EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
-      EnviarMensaje(1, laburante2)
-      EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
-      EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+      si (id=1)
+        EnviarMensaje(1, laburante) {indico numero de tarea}
+        EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+      sino
+        EnviarMensaje(1, laburante2)
+        EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
     sino
       si tarea=2
-        EnviarMensaje(2, laburante) {indico numero de tarea}
-        EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
-        EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
-        EnviarMensaje(2, laburante2)
-        EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
-        EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+        si (id=1)
+          EnviarMensaje(2, laburante) {indico numero de tarea}
+          EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+          EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        sino
+          EnviarMensaje(2, laburante2)
+          EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+          EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
       sino
-        EnviarMensaje(3, laburante) {indico numero de tarea}
-        EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
-        EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
-        EnviarMensaje(3, laburante2)
-        EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
-        EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+        si (id=1)
+          EnviarMensaje(3, laburante) {indico numero de tarea}
+          EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+          EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        sino
+          EnviarMensaje(3, laburante2)
+          EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+          EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
   fin
 areas
   cuadrante: AreaPC (2,2,100,100)
@@ -63,59 +69,53 @@ areas
 robots
   robot jefe
   variables
-    avAle, caAle, tarea: numero
-    ok, ok2: boolean
+    avAle, caAle, tarea, idAle: numero
+    ok: boolean
   comenzar
     repetir 10
       Random(tarea, 1, 3)
       Random(avAle, 2, 100)
       Random(caAle, 2, 100)
-      enviarTareas(tarea, avAle, caAle)
-      RecibirMensaje(ok, laburante) {espero finalizacion robot 1}
-      RecibirMensaje(ok2, laburante2) {espero finalizacion robot 2}
+      Random(idAle, 1, 2)
+      enviarTareas(tarea, avAle, caAle, idAle)
+    repetir 10
+      RecibirMensaje(ok, *)
     EnviarMensaje(4, laburante){envio que finalizo}
     EnviarMensaje(4, laburante2){envio que finalizo}  
   fin
   robot trabajadores
   variables
     tarea, avOri, caOri, caEsq, avEsq: numero
-    seguir: boolean
   comenzar
     avOri:= PosAv
     caOri:= PosCa
-    seguir:= V
     RecibirMensaje(tarea, rJefe) {recibe tarea por primera vez}
-    mientras (seguir=V)      
+    mientras (tarea<>4)      
       RecibirMensaje(avEsq, rJefe)
       RecibirMensaje(caEsq, rJefe)
-      si(tarea=4)
-        tarea4(seguir) {finalizo bucle}
+      si (tarea=1)
+        BloquearEsquina(avEsq, caEsq)
+        Pos(avEsq, caEsq)
+        tarea1
+        Pos(avOri, caOri)
+        LiberarEsquina(avEsq, caEsq)
+        EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
       sino
-        si (tarea=1)
+        si (tarea=2)
           BloquearEsquina(avEsq, caEsq)
           Pos(avEsq, caEsq)
-          tarea1
+          tarea2
           Pos(avOri, caOri)
           LiberarEsquina(avEsq, caEsq)
           EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
-          RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
         sino
-          si (tarea=2)
-            BloquearEsquina(avEsq, caEsq)
-            Pos(avEsq, caEsq)
-            tarea2
-            Pos(avOri, caOri)
-            LiberarEsquina(avEsq, caEsq)
-            EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
-            RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
-          sino
-            BloquearEsquina(avEsq, caEsq)
-            Pos(avEsq, caEsq)
-            tarea3
-            Pos(avOri, caOri)
-            LiberarEsquina(avEsq, caEsq)
-            EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
-            RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
+          BloquearEsquina(avEsq, caEsq)
+          Pos(avEsq, caEsq)
+          tarea3
+          Pos(avOri, caOri)
+          LiberarEsquina(avEsq, caEsq)
+          EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
+      RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
   fin
 variables
   laburante: trabajadores
@@ -143,8 +143,8 @@ fin
 {nueva tarea.}
 {El robot jefe inicia en la esquina (1,1) y los robots trabajadores inician en las esquinas (2,1)}
 {y (3,1). Las tareas se asignan aleatoriamente a cualquier esquina dentro del cuadrante}
-{comprendido entre las esquinas (2,2) y (100,100). El robot jefe envía 10 tareas aleatorias}
-{(entre 1 y 3) a trabajadores aleatorios y termina. Al finalizar el jefe envía la tarea 4.}
-{Analice: existe el riesgo de que el programa quede bloqueado, y que ningún robot}
-{trabajador pueda realizar su tarea. ¿en qué caso puede suceder esto? ¿qué resulta}
-{necesario considerar para evitar esta situación?}
+{comprendido entre las esquinas (2,2) y (100,100). El robot jefe envÃ­a 10 tareas aleatorias}
+{(entre 1 y 3) a trabajadores aleatorios y termina. Al finalizar el jefe envÃ­a la tarea 4.}
+{Analice: existe el riesgo de que el programa quede bloqueado, y que ningÃºn robot}
+{trabajador pueda realizar su tarea. Â¿en quÃ© caso puede suceder esto? Â¿quÃ© resulta}
+{necesario considerar para evitar esta situaciÃ³n?}
