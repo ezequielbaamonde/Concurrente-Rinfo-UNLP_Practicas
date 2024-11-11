@@ -1,30 +1,41 @@
-{Consultar pasaje de mensajes}
+{Consultar pasaje de mensajes (¿sin repetirs?)}
+{Consultar "desincronización"}
+{Consultar prog robot}
 programa Barrera_A
 procesos
   proceso juntarPapeles
   comenzar
     mientras HayPapelEnLaEsquina
-      tomarPapeles
+      tomarPapel
   fin
   proceso avisar(E id: numero)
   comenzar
     si id=1
-      EnviarMensaje(id, r2)
       EnviarMensaje(V, r2)
-      EnviarMensaje(id, r3)
       EnviarMensaje(V, r3)
     sino
       si id=2
-        EnviarMensaje(id, r1)
         EnviarMensaje(V, r1)
-        EnviarMensaje(id, r3)
         EnviarMensaje(V, r3)
       sino
-        si id=3
-          EnviarMensaje(id, r1)
-          EnviarMensaje(V, r1)
-          EnviarMensaje(id, r2)
-          EnviarMensaje(V, r2)
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r2)
+  fin
+  
+  proceso recibir(E id: numero)
+  variables
+    seguir: boolean
+  comenzar
+    si id=1
+      RecibirMensaje(seguir, r2)
+      RecibirMensaje(seguir, r3)
+    sino
+      si id=2
+        RecibirMensaje(seguir, r1)
+        RecibirMensaje(seguir, r3)
+      sino
+        RecibirMensaje(seguir, r1)
+        RecibirMensaje(seguir, r2)
   fin
 areas
   av1: AreaP(1,1,1,100)
@@ -35,26 +46,17 @@ areas
 robots
   robot recolectores
   variables
-    id, idRb: numero
-    seguir: boolean
+    id: numero
   comenzar
-    seguir:= V
     RecibirMensaje(id, fisca)
     mientras (PosCa<100) {mientras no se termine la av}
       repetir 5
         juntarPapeles
-        mover
+        si (PosCa<>100)
+          mover
       avisar(id) {aviso que termine}
-      repetir 2 {espero confirmaciÃ³n retorno de los otros 2 robots}
-        RecibirMensaje(idRb, *)
-        si id=1
-          RecibirMensaje(seguir, r1)
-        sino
-          si id=2
-            RecibirMensaje(seguir, r2)
-          sino
-            si id=3
-              RecibirMensaje(seguir, r3)     
+      recibir(id)
+    Informar(PosCa)
   fin
   robot fiscalizador
   comenzar
