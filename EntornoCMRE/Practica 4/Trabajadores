@@ -1,0 +1,150 @@
+{Consultar por que, al finalizar las 10 tareas, quedan los trabajadores esperando un mensaje}
+
+{La tarea se la DEBO ENVIAR a un robot aleatorio, por lo que tengo id random entre 1,2}
+  {es decir, no edebo enviarle la misma tarea a los 2 robots}
+{El jefe debe hacer un repetir 10 enviando solo las tareas. Luego, otro repetir 10 recibiendo mensajes de * (de cualquier robot) y una vez finalizado esos 2 repetir le envio la tarea 4 tanto al robot 1 como el 2}
+
+
+programa MasterSlaves
+procesos
+  proceso tarea1{recoger FLORES}
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  proceso tarea2{recoger PAPELES}
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  proceso tarea3
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+  proceso tarea4(ES seguir: boolean)
+  comenzar
+    seguir:= F {cambio valor del while para que salga del bucle y finalice el programa cada robot}
+  fin
+  {proceso mensajes}
+  proceso enviarTareas(E tarea: numero; E av: numero; E ca: numero)
+  comenzar
+    si tarea=1
+      EnviarMensaje(1, laburante) {indico numero de tarea}
+      EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+      EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+      EnviarMensaje(1, laburante2)
+      EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+      EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+    sino
+      si tarea=2
+        EnviarMensaje(2, laburante) {indico numero de tarea}
+        EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(2, laburante2)
+        EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+      sino
+        EnviarMensaje(3, laburante) {indico numero de tarea}
+        EnviarMensaje(av, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(ca, laburante){los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(3, laburante2)
+        EnviarMensaje(av, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+        EnviarMensaje(ca, laburante2) {los trabajadores deben bloquear la esquina antes de moverse}
+  fin
+areas
+  cuadrante: AreaPC (2,2,100,100)
+  esqJefe: AreaP(1,1,1,1)
+  esqUno: AreaP(2,1,2,1)
+  esqDos: AreaP(3,1,3,1)
+  
+robots
+  robot jefe
+  variables
+    avAle, caAle, tarea: numero
+    ok, ok2: boolean
+  comenzar
+    repetir 10
+      Random(tarea, 1, 3)
+      Random(avAle, 2, 100)
+      Random(caAle, 2, 100)
+      enviarTareas(tarea, avAle, caAle)
+      RecibirMensaje(ok, laburante) {espero finalizacion robot 1}
+      RecibirMensaje(ok2, laburante2) {espero finalizacion robot 2}
+    EnviarMensaje(4, laburante){envio que finalizo}
+    EnviarMensaje(4, laburante2){envio que finalizo}  
+  fin
+  robot trabajadores
+  variables
+    tarea, avOri, caOri, caEsq, avEsq: numero
+    seguir: boolean
+  comenzar
+    avOri:= PosAv
+    caOri:= PosCa
+    seguir:= V
+    RecibirMensaje(tarea, rJefe) {recibe tarea por primera vez}
+    mientras (seguir=V)      
+      RecibirMensaje(avEsq, rJefe)
+      RecibirMensaje(caEsq, rJefe)
+      si(tarea=4)
+        tarea4(seguir) {finalizo bucle}
+      sino
+        si (tarea=1)
+          BloquearEsquina(avEsq, caEsq)
+          Pos(avEsq, caEsq)
+          tarea1
+          Pos(avOri, caOri)
+          LiberarEsquina(avEsq, caEsq)
+          EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
+          RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
+        sino
+          si (tarea=2)
+            BloquearEsquina(avEsq, caEsq)
+            Pos(avEsq, caEsq)
+            tarea2
+            Pos(avOri, caOri)
+            LiberarEsquina(avEsq, caEsq)
+            EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
+            RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
+          sino
+            BloquearEsquina(avEsq, caEsq)
+            Pos(avEsq, caEsq)
+            tarea3
+            Pos(avOri, caOri)
+            LiberarEsquina(avEsq, caEsq)
+            EnviarMensaje(V, rJefe) {le digo que termine mi tarea}
+            RecibirMensaje(tarea, rJefe) {quedo a la espera de una nueva tarea}
+  fin
+variables
+  laburante: trabajadores
+  laburante2: trabajadores
+  rJefe: jefe
+comenzar
+  AsignarArea(rJefe, esqJefe)
+  AsignarArea(rJefe, esqJefe)
+  AsignarArea(laburante, esqUno)
+  AsignarArea(laburante2, esqDos)
+  AsignarArea(laburante, cuadrante)
+  AsignarArea(laburante2, cuadrante)
+  Iniciar(rJefe, 1,1)
+  Iniciar(laburante, 2,1)
+  Iniciar(laburante2, 3,1)
+fin
+
+
+{Un robot jefe asigna tareas a los trabajadores. Las tareas consisten en 1. recoger flores, 2.}
+{recoger papeles, 3. vaciar bolsa, 4. finalizar .}
+{Existen 2 robots trabajadores que reciben solicitudes de tareas del robot jefe. Para cada}
+{solicitud, reciben la tarea y la esquina donde deben realizarla (salvo cuando la tarea es 4}
+{que no deben acceder a una esquina). Luego de recibir la tarea, los robots van a la esquina}
+{indicada, realizan la tarea, avisan al jefe que ya la completaron y quedan a la espera de una}
+{nueva tarea.}
+{El robot jefe inicia en la esquina (1,1) y los robots trabajadores inician en las esquinas (2,1)}
+{y (3,1). Las tareas se asignan aleatoriamente a cualquier esquina dentro del cuadrante}
+{comprendido entre las esquinas (2,2) y (100,100). El robot jefe envía 10 tareas aleatorias}
+{(entre 1 y 3) a trabajadores aleatorios y termina. Al finalizar el jefe envía la tarea 4.}
+{Analice: existe el riesgo de que el programa quede bloqueado, y que ningún robot}
+{trabajador pueda realizar su tarea. ¿en qué caso puede suceder esto? ¿qué resulta}
+{necesario considerar para evitar esta situación?}
