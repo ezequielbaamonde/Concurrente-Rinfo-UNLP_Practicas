@@ -1,0 +1,194 @@
+programa ejemplo
+procesos
+  proceso juntarFlores(ES f:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      f:= f+1
+  fin
+  proceso juntarPapeles(ES p:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      p:= p+1
+  fin
+
+  proceso recorrerAvenida2(ES cantFlor: numero)
+  comenzar
+    repetir 96
+      juntarFlores(cantFlor)
+      mover
+    BloquearEsquina(2,98)
+    mover
+    juntarFlores(cantFlor)
+    BloquearEsquina(2,99)
+    mover
+    LiberarEsquina(2,98)
+    juntarFlores(cantFlor)
+    mover {100}
+    LiberarEsquina(2,99)
+    juntarFlores(cantFlor)
+  fin
+
+  proceso recorrerAvenida3(ES cantFlor: numero)
+  comenzar
+    repetir 96
+      juntarFlores(cantFlor)
+      mover
+    BloquearEsquina(3,98)
+    mover
+    juntarFlores(cantFlor)
+    BloquearEsquina(3,99)
+    mover
+    LiberarEsquina(3,98)
+    juntarFlores(cantFlor)
+    mover {100}
+    LiberarEsquina(3,99)
+    juntarFlores(cantFlor)
+  fin
+  
+  proceso recorrerCalle98(ES cantPapeles: numero)
+  comenzar
+    derecha
+    juntarPapeles(cantPapeles)
+    BloquearEsquina(2,98)
+    mover
+    juntarPapeles(cantPapeles)
+    BloquearEsquina(3,98)
+    mover
+    LiberarEsquina(2,98)
+    juntarPapeles(cantPapeles)
+    mover
+    LiberarEsquina(3,98)
+    repetir 96
+      juntarPapeles(cantPapeles)
+      mover
+  fin
+
+  proceso recorrerCalle99(ES cantPapeles: numero)
+  comenzar
+    derecha
+    juntarPapeles(cantPapeles)
+    BloquearEsquina(2,99)
+    mover
+    juntarPapeles(cantPapeles)
+    BloquearEsquina(3,99)
+    mover
+    LiberarEsquina(2,99)
+    juntarPapeles(cantPapeles)
+    mover
+    LiberarEsquina(3,99)
+    repetir 96
+      juntarPapeles(cantPapeles)
+      mover
+  fin
+  
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, a1)
+    EnviarMensaje(4, a2)
+  fin
+areas
+  iniJefe: AreaP(1,1,1,1)
+  av2: AreaPC(2,1,2,100)
+  av3: AreaPC(3,1,3,100)
+  ca98: AreaPC(1,98,100,98)
+  ca99: AreaPC(1,99,100,99)
+robots
+  robot rojo1
+  variables
+    flores, id: numero
+  comenzar
+    RecibirMensaje(id, fisca) {1}
+    flores:= 0
+    recorrerAvenida2(flores)
+    EnviarMensaje(id, fisca)
+    EnviarMensaje(flores, fisca)
+  fin
+  
+  robot rojo2
+  variables
+    flores, id: numero
+  comenzar
+    RecibirMensaje(id, fisca) {2}
+    flores:= 0
+    recorrerAvenida3(flores)
+    EnviarMensaje(id, fisca)
+    EnviarMensaje(flores, fisca)
+  fin
+
+  robot azul1
+  variables
+    papeles, id: numero
+  comenzar
+    RecibirMensaje(id, fisca) {1}
+    papeles:= 0
+    recorrerCalle98(papeles)
+    EnviarMensaje(id, fisca)
+    EnviarMensaje(papeles, fisca)
+  fin
+   
+  robot azul2
+  variables
+    papeles, id: numero
+  comenzar
+    RecibirMensaje(id, fisca) {1}
+    papeles:= 0
+    recorrerCalle99(papeles)
+    EnviarMensaje(id, fisca)
+    EnviarMensaje(papeles, fisca)
+  fin
+    
+  robot fiscalizador
+  variables
+    objetos, acumFlores, acumPapeles, id: numero
+  comenzar
+    enviarID
+    acumFlores:= 0
+    acumPapeles:= 0
+    repetir 4
+      RecibirMensaje(id, *)
+      si (id=1)
+        RecibirMensaje(objetos, r1)
+        acumFlores:= acumFlores + objetos
+      sino
+        si (id=2)
+          RecibirMensaje(objetos, r2)
+          acumFlores:= acumFlores + objetos
+        sino
+          si (id=3)
+            RecibirMensaje(objetos, a1)
+            acumPapeles:= acumPapeles + objetos
+          sino
+            RecibirMensaje(objetos, a2)
+            acumPapeles:= acumPapeles + objetos    
+    si (acumPapeles>acumFlores)
+      Informar ('Gano el equipo azul con ', acumPapeles)
+    sino
+      si (acumPapeles<acumFlores)
+        Informar ('Gano el equipo rojo con ', acumFlores)
+      sino
+        Informar ('Empate', acumFlores)                
+  fin
+variables
+  r1: rojo1
+  r2: rojo2
+  a1: azul1
+  a2: azul2
+  fisca: fiscalizador
+comenzar
+  AsignarArea(r1, av2)
+  AsignarArea(r2, av3)
+  AsignarArea(a1, ca98)
+  AsignarArea(a2, ca99)
+  AsignarArea(fisca, iniJefe)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 3,1)
+  Iniciar(a1, 1,98)
+  Iniciar(a2, 1,99)
+  Iniciar(fisca, 1,1)
+fin
+
+
