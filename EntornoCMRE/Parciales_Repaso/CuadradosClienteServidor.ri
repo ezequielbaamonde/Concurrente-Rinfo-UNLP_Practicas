@@ -1,0 +1,105 @@
+{pendiente el tipo de robot SV}
+
+programa Cuadrados_CLI_SV
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  proceso cuadrado
+  variables
+    tamanio: numero
+  comenzar
+    repetir 2 {primeros 2 cuadrados}
+      RecibirMensaje(tamanio, serv) {entre 1 y 5 recibe el tamanio}
+      repetir 4
+        repetir tamanio
+          juntarFlores
+          mover
+        derecha
+      Pos(PosAv, PosCa +(tamanio+1)) {salta a la proxima direccion}  
+    {ultimo cuadrado finalizando donde quedo}
+    RecibirMensaje(tamanio, serv) {entre 1 y 5 recibe el tamanio}
+    repetir 4
+      repetir tamanio
+        juntarFlores
+        mover
+      derecha
+  fin
+  
+  proceso dejarFlores
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    mientras HayFlorEnLaBolsa
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      depositarFlor {deja de a 1}
+      Pos(av, ca)
+      LiberarEsquina(50,50) 
+  fin
+areas
+  area1: AreaP(1,1,6,19)
+  area2: AreaP(8,1,13,19)
+  area3: AreaP(15,1,20,19)
+  sv: AreaP(22,1, 22, 1)
+  deposito: AreaC(50,50,50,50)
+robots
+  robot cliente
+  variables
+    tamanio: numero
+    termine: boolean
+  comenzar 
+    cuadrado
+    dejarFlores
+    termine:= V {Le doy valor a mi variable booleana para pasarle al sv}
+    EnviarMensaje(termine, serv) {envÃ­o mensaje de finalizacion}
+  fin
+  
+  robot servidor
+  variables
+    tamAle, flores: numero
+    listo: boolean
+  comenzar
+    flores:= 0
+    repetir 3
+      Random(tamAle, 1, 5)
+      EnviarMensaje(tamAle, r1)
+      Random(tamAle, 1, 5)
+      EnviarMensaje(tamAle, r2)
+      Random(tamAle, 1, 5)
+      EnviarMensaje(tamAle, r3)
+    repetir 3
+      RecibirMensaje(listo, *)
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      flores:= flores + 1
+    Informar('Cantidad juntada ', flores)
+    
+  fin
+variables
+  r1: cliente
+  r2: cliente
+  r3: cliente
+  serv: servidor
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, deposito)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, deposito)
+  AsignarArea(r3, area3)
+  AsignarArea(r3, deposito)
+  AsignarArea(serv, sv)
+  AsignarArea(serv, deposito)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 8, 1)
+  Iniciar(r3, 15, 1)
+  Iniciar(serv, 22, 1)
+
+fin
