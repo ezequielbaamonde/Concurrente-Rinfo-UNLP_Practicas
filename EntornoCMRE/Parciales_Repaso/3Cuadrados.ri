@@ -1,0 +1,94 @@
+programa ParcialTurnoE_Baamonde
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+areas
+  uno: AreaP (1,1,5,16)
+  dos: AreaP (7,1,11,16)
+  tres: AreaP (14,1,18,16)
+  deposito: AreaP(50,50,50,50)
+  inicio: AreaP(51,51,51,51)
+robots
+  robot cuadrado
+  variables
+    ladoAle, verticeAv, verticeCa, cantEsquinas, id: numero
+  comenzar
+    RecibirMensaje(id, coordi)
+    cantEsquinas:= 0
+    repetir 3
+      Random(ladoAle, 1, 4)
+      verticeAv:= PosAv
+      verticeCa:= PosCa+ladoAle
+      repetir 2
+        repetir ladoAle
+          juntarFlores
+          mover
+          cantEsquinas:= cantEsquinas+1
+        derecha
+        repetir ladoAle
+          juntarFlores
+          mover
+          cantEsquinas:= cantEsquinas+1
+        derecha
+      mientras HayFlorEnLaBolsa
+        BloquearEsquina(50,50)
+        Pos(50,50)
+        cantEsquinas:= cantEsquinas+1
+        depositarFlor
+        Pos(verticeAv, verticeCa)
+        cantEsquinas:= cantEsquinas+1
+        LiberarEsquina(50,50)
+      Pos(verticeAv, verticeCa+1){me ubico en el vertice del sig cuadrado}
+      cantEsquinas:= cantEsquinas+1
+    EnviarMensaje(id, coordi)
+    EnviarMensaje(cantEsquinas, coordi)
+  fin
+  
+  robot coordinador
+  variables
+    id, esquinas, cantMax, idMax: numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    repetir 3
+      RecibirMensaje(id, *)
+      si (id=1)
+        RecibirMensaje(esquinas, r1)
+        si (cantMax<esquinas)
+          cantMax:= esquinas
+          idMax:= id
+      sino
+        si (id=2)
+          RecibirMensaje(esquinas, r2)
+          si (cantMax<esquinas)
+            cantMax:= esquinas
+            idMax:= id
+        sino
+          RecibirMensaje(esquinas, r3)
+          si (cantMax<esquinas)
+            cantMax:= esquinas
+            idMax:= id
+    Informar('El ganador es ', idMax)
+  fin
+variables
+  r1: cuadrado
+  r2: cuadrado
+  r3: cuadrado
+  coordi: coordinador
+comenzar
+  AsignarArea(r1, uno)
+  AsignarArea(r1, deposito)
+  AsignarArea(r2, dos)
+  AsignarArea(r2, deposito)
+  AsignarArea(r3, tres)
+  AsignarArea(r3, deposito) 
+  AsignarArea(coordi, inicio)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 7,1)
+  Iniciar(r3, 14,1)
+  Iniciar(coordi, 51,51)
+fin
