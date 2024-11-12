@@ -1,0 +1,105 @@
+programa papelerosYescalones
+procesos
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+  proceso dejarPapeles
+  comenzar
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+  
+  proceso depositarPapeles
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    BloquearEsquina(99,99)
+    Pos(99,99)
+    dejarPapeles
+    Pos(av, ca)
+    LiberarEsquina(99,99)
+  fin
+  
+  proceso escalon(E tamAlto: numero; E tamAncho: numero; ES esquinas: numero)
+  comenzar
+    repetir tamAlto
+      si HayPapelEnLaEsquina
+        juntarPapeles
+        esquinas:= esquinas + 1
+      mover
+    depositarPapeles
+    derecha
+    repetir tamAncho
+      si HayPapelEnLaEsquina
+        juntarPapeles
+        esquinas:= esquinas + 1
+      mover
+    repetir 3
+      derecha
+  fin
+areas
+  deposito: AreaP (99,99,99,99)
+  iniFisca: AreaP(1,1,1,1)
+  area1: AreaP (2, 1, 19, 13)
+  area2: AreaP (32, 1, 49, 13)
+  area3: AreaP (62, 1, 79, 13)
+robots
+  robot papeleros
+  variables
+    altoAle, anchoAle, esquinas: numero
+    ok: boolean
+  comenzar
+    esquinas:= 0
+    ok:= V
+    repetir 4
+      Random(altoAle, 1, 3)
+      Random(anchoAle, 2, 4)
+      escalon(altoAle, anchoAle, esquinas)
+      EnviarMensaje(ok, fisca)
+      RecibirMensaje(ok, fisca) {espero indicación para seguir proximo escalon}
+    EnviarMensaje(esquinas, fisca) {aviso cuantas esquinas vacie}
+  fin
+  
+  robot fiscalizador
+  variables
+    confirmacion, seguir: boolean
+    total, esquinas: numero
+  comenzar
+    total:= 0
+    seguir:= V
+    repetir 4
+      repetir 3
+        RecibirMensaje(confirmacion, *) {espero confirmacion de 3 robots}
+      {envio confirmacion para que continuen con el sig escalon}
+      EnviarMensaje(seguir, r1)
+      EnviarMensaje(seguir, r2)
+      EnviarMensaje(seguir, r3)
+    repetir 3
+      RecibirMensaje(esquinas, *)
+      total:= total + esquinas
+    Informar('La cantidad total de esquinas vaciadas son ', total)
+  fin
+  
+variables
+  r1: papeleros
+  r2: papeleros
+  r3: papeleros
+  fisca: fiscalizador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, deposito)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, deposito)
+  AsignarArea(r3, area3)
+  AsignarArea(r3, deposito)
+  AsignarArea(fisca, iniFisca)
+  Iniciar(fisca, 1,1)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 32,1)
+  Iniciar(r3, 62,1)
+fin
