@@ -1,0 +1,115 @@
+programa intentosFloreros
+procesos
+
+  proceso juntarFlores(ES f: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      f:= f+1
+  fin
+  
+  proceso determinarEsquina(E id: numero; E av: numero; E ca: numero)
+  variables
+    arrancar: boolean
+  comenzar
+    arrancar:= V
+    si (id=1)
+      EnviarMensaje(arrancar, florero1)
+      EnviarMensaje(av, florero1)
+      EnviarMensaje(ca, florero1)
+    sino
+      si (id=2)
+        EnviarMensaje(arrancar, florero2)
+        EnviarMensaje(av, florero2)
+        EnviarMensaje(ca, florero2)
+      sino
+        si (id=3)
+          EnviarMensaje(arrancar, florero3)
+          EnviarMensaje(av, florero3)
+          EnviarMensaje(ca, florero3)
+  fin
+  
+areas
+  cuadrante: AreaPC (40,40,60,60)
+  deposito: AreaP (10,10,10,10)
+  areaF: AreaP(4,1,4,1)
+  area1: AreaP(1,1,1,1)
+  area2: AreaP(2,1,2,1)
+  area3: AreaP(3,1,3,1)
+  
+robots
+  robot fiscalizador
+  variables
+    id, avAle, caAle, robAle, flores, floresTotal: numero
+    intento: boolean
+  comenzar
+    floresTotal:= 0
+    EnviarMensaje(1, florero1)
+    EnviarMensaje(2, florero2)
+    EnviarMensaje(3, florero3)
+    repetir 8
+      Random(avAle, 40, 60)
+      Random(caAle, 40, 60)
+      Random(robAle, 1, 3)
+      determinarEsquina(robAle, avAle, caAle)
+    {Indicar que no hay mas intentos}
+    intento:= F
+    EnviarMensaje(intento, florero1)
+    EnviarMensaje(intento, florero2)
+    EnviarMensaje(intento, florero3)
+    repetir 3
+      RecibirMensaje(flores, *)
+      floresTotal:= floresTotal + flores
+    Informar('La cantidad de flors que se tomaron en total son ', floresTotal)
+  fin
+  
+  robot florero
+  variables
+    id, av, ca, iniAv, iniCa, flores: numero
+    arranco:boolean
+  comenzar
+    flores:= 0
+    iniAv:= PosAv
+    iniCa:= PosCa
+    RecibirMensaje(id, fisca)
+    RecibirMensaje(arranco, fisca)
+    mientras (arranco = V)
+      RecibirMensaje(av, fisca)
+      RecibirMensaje(ca, fisca)
+      BloquearEsquina(av,ca)
+      Pos(av, ca)
+      juntarFlores(flores)
+      Pos(iniAv, iniCa)
+      LiberarEsquina(av, ca)
+      RecibirMensaje(arranco, fisca)
+    mientras HayFlorEnLaBolsa
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      Pos(iniAv, iniCa)
+      LiberarEsquina(10,10)
+    EnviarMensaje(flores, fisca)
+    
+  fin
+  
+variables
+  fisca: fiscalizador
+  florero1: florero
+  florero2: florero
+  florero3: florero
+comenzar
+  AsignarArea(fisca, areaF)
+  AsignarArea(florero1, area1)
+  AsignarArea(florero1, cuadrante)
+  AsignarArea(florero1, deposito)
+  AsignarArea(florero2, area2)
+  AsignarArea(florero2, cuadrante)
+  AsignarArea(florero2, deposito)
+  AsignarArea(florero3, area3)
+  AsignarArea(florero3, cuadrante)
+  AsignarArea(florero3, deposito)
+  Iniciar(fisca, 4,1)
+  Iniciar(florero1, 1,1)
+  Iniciar(florero2, 2,1)
+  Iniciar(florero3, 3,1)
+fin
