@@ -1,0 +1,133 @@
+programa perimetro
+procesos
+  proceso juntarFlores(ES f:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      f:= f+1
+  fin
+  
+  proceso dejarFlores
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    mientras HayFlorEnLaBolsa
+      BloquearEsquina(25,25)
+      Pos(25,25)
+      depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(25,25)
+  fin
+  
+  proceso rectangulo(E ladoA: numero; E ladoB: numero; ES flores: numero)
+  variables
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    repetir 2
+      repetir ladoA
+        juntarFlores(flores)
+        mover
+      dejarFlores
+      derecha
+      repetir ladoB
+        juntarFlores(flores)
+        mover
+      dejarFlores
+      derecha
+  fin
+  
+  proceso enviarLados
+  variables
+    alt, anc: numero
+  comenzar
+    Random(alt, 1, 10) {altura}
+    Random(anc, 1, 5) {ancho}
+    EnviarMensaje(alt, recolector1)
+    EnviarMensaje(anc, recolector1)
+    Random(alt, 1, 10) {altura}
+    Random(anc, 1, 5) {ancho}
+    EnviarMensaje(alt, recolector2)
+    EnviarMensaje(anc, recolector2)   
+    Random(alt, 1, 10) {altura}
+    Random(anc, 1, 5) {ancho}
+    EnviarMensaje(alt, recolector3)
+    EnviarMensaje(anc, recolector3)   
+  fin
+
+areas
+  rec1: AreaP(1,1,6,11)
+  rec2: AreaP(7,1,12,11)
+  rec3: AreaP(13,1,18,11)
+  iniCoord: AreaP(24,24,24,24)
+  deposito: AreaP(25,25,25,25)
+robots
+  robot recolectores
+  variables
+    id, cantF, ladoA, ladoB: numero
+  comenzar
+    cantF:= 0
+    RecibirMensaje(id, coordi)
+    RecibirMensaje(ladoA, coordi)
+    RecibirMensaje(ladoB, coordi)
+    rectangulo(ladoA, ladoB, cantF)
+    EnviarMensaje(id, coordi)
+    EnviarMensaje(cantF, coordi)
+  fin
+  
+  robot coordinador
+  variables
+    idMax, cantMax, idR, flores, alt, anc: numero
+  comenzar
+    idMax:= 0
+    cantMax:= 0
+    flores:= 0
+    {id}
+    EnviarMensaje(1, recolector1)
+    EnviarMensaje(2, recolector2)
+    EnviarMensaje(3, recolector3)
+    {enviar tamanios}
+    enviarLados
+    repetir 3
+      RecibirMensaje(idR, *)
+      si (idR=1)
+        RecibirMensaje(flores, recolector1)
+        si (flores>cantMax)
+          cantMax:= flores
+          idMax:= idR
+      sino
+        si (idR=2)
+          RecibirMensaje(flores, recolector2)
+          si (flores>cantMax)
+            cantMax:= flores
+            idMax:= idR
+        sino
+          si (idR=3)
+            RecibirMensaje(flores, recolector3)
+            si (flores>cantMax)
+              cantMax:= flores
+              idMax:= idR
+    Informar('El recolector que junto mas flores es el ', idMax)
+  fin
+  
+variables
+  coordi: coordinador
+  recolector1: recolectores
+  recolector2: recolectores
+  recolector3: recolectores
+comenzar
+  AsignarArea(recolector1, rec1)
+  AsignarArea(recolector1, deposito)
+  AsignarArea(recolector2, rec2)
+  AsignarArea(recolector2, deposito)
+  AsignarArea(recolector3, rec3)
+  AsignarArea(recolector3, deposito)
+  AsignarArea(coordi, iniCoord)
+  Iniciar(recolector1, 1,1)
+  Iniciar(recolector2, 7,1)
+  Iniciar(recolector3, 13,1)
+  Iniciar(coordi, 24, 24)
+fin
